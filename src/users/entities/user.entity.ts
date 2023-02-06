@@ -13,7 +13,7 @@ import {
   Unique,
 } from 'typeorm';
 
-@Entity()
+@Entity('users')
 @Unique(['email', 'pseudo', 'password'])
 export class User extends BaseEntity {
   @ApiProperty()

@@ -10,6 +10,7 @@ import { CompetencesModule } from './competences/competences.module';
 import { PresentationsModule } from './presentations/presentations.module';
 import { FriendshipsModule } from './friendships/friendships.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProfilesModule } from './profiles/profiles.module';
     PresentationsModule,
     FriendshipsModule,
     ProfilesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
