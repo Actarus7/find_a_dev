@@ -1,1 +1,1 @@
-export class Friendship {}
+export class Friendship {} 
