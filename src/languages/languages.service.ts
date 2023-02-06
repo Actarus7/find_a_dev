@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
+import { Language } from './entities/language.entity';
 
 @Injectable()
 export class LanguagesService {
-  create(createLanguageDto: CreateLanguageDto) {
-    return 'This action adds a new language';
-  }
+  async create(createLanguageDto: CreateLanguageDto | any) {
+    const newLanguage = await Language.save(createLanguageDto);
 
-  findAll() {
+    if (newLanguage) {
+      return newLanguage;
+    };
+
+    return undefined;
+  };
+
+  async findAll() {
     return `This action returns all languages`;
   }
 

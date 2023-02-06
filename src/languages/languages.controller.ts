@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
@@ -8,8 +8,11 @@ export class LanguagesController {
   constructor(private readonly languagesService: LanguagesService) {}
 
   @Post()
-  create(@Body() createLanguageDto: CreateLanguageDto) {
-    return this.languagesService.create(createLanguageDto);
+  async create(@Body() createLanguageDto: CreateLanguageDto) {
+
+    const newLanguage = await this.languagesService.create(createLanguageDto);
+    
+    return newLanguage;
   };
 
   @Get()
