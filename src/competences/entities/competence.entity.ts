@@ -8,13 +8,14 @@ export class Competence extends BaseEntity{
 
     @ApiProperty()
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @ApiProperty()
     @Column()
-    description: string
+    description: string;
 
     @ApiProperty()
     @ManyToOne(() => Profile, (profile) => profile.competences)
-    profile: Profile
-}
+    profile: Profile;
+    
+};
