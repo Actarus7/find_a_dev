@@ -78,8 +78,8 @@ export class User extends BaseEntity {
   profile: Profile;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)
-  friendship: Friendship[];
+  friendships: Friendship[];
 
   @OneToMany(() => Friendship, (friendship) => friendship.friend)
-  friend: Friendship[];
+  friends: Friendship[];
 }
