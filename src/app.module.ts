@@ -16,6 +16,7 @@ import { Presentation } from './presentations/entities/presentation.entity';
 import { Language } from './languages/entities/language.entity';
 import { Friendship } from './friendships/entities/friendship.entity';
 import { Competence } from './competences/entities/competence.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,7 +28,14 @@ import { Competence } from './competences/entities/competence.entity';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Profile, Presentation, Language, Friendship, Competence/* join(__dirname, '*', '.entity.{ts,js}') */],
+      entities: [
+        User,
+        Profile,
+        Presentation,
+        Language,
+        Friendship,
+        Competence /* join(__dirname, '*', '.entity.{ts,js}') */,
+      ],
       synchronize: true,
     }),
     UsersModule,
@@ -36,6 +44,7 @@ import { Competence } from './competences/entities/competence.entity';
     PresentationsModule,
     FriendshipsModule,
     ProfilesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
