@@ -9,15 +9,15 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 
 @Entity('users')
-@Unique(['email', 'pseudo', 'password'])
+@Unique(['email', 'pseudo'])
 export class User extends BaseEntity {
   @ApiProperty()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @ApiProperty()

@@ -1,4 +1,4 @@
-import { IsEmail, IsPostalCode, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsPostalCode, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -26,15 +26,18 @@ export class CreateUserDto {
   region: string;
 
   @IsString()
+  @IsOptional()
   departement: string;
 
   @IsString()
   adress_1: string;
 
   @IsString()
+  @IsOptional()
   adress_2: string;
 
   @IsString()
+  @IsOptional()
   adress_3: string;
 
   @IsPostalCode('any')
