@@ -12,7 +12,7 @@ export class Competence extends BaseEntity{
 
     @ApiProperty()
     @Column()
-    competence: string
+    description: string
 
     @ApiProperty()
     @ManyToOne(() => Profile, (profile) => profile.competence)
