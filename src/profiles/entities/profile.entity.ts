@@ -2,10 +2,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Competence } from "src/competences/entities/competence.entity";
 import { Language } from "src/languages/entities/language.entity";
 import { Presentation } from "src/presentations/entities/presentation.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("profiles")
-export class Profile {
+export class Profile extends BaseEntity {
 
     @ApiProperty()
     @PrimaryGeneratedColumn()
