@@ -15,6 +15,6 @@ export class Competence extends BaseEntity{
     description: string
 
     @ApiProperty()
-    @ManyToOne(() => Profile, (profile) => profile.competence)
+    @ManyToOne(() => Profile, (profile) => profile.competences)
     profile: Profile
 }
