@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Profile } from "src/profiles/entities/profile.entity";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('competences')
@@ -8,4 +9,7 @@ export class Competence extends BaseEntity{
 
     @Column()
     competence: string
+
+    @ManyToOne(() => Profile, (profile) => profile.competence)
+    profile: Profile
 }
