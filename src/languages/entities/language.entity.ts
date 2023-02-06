@@ -13,6 +13,7 @@ export class Language extends BaseEntity {
     @Column({type: 'varchar'})
     name: string;
 
+    @ApiProperty()
     @ManyToOne(() => Profile, (profile) => profile.languages)
     profile: Profile;
 

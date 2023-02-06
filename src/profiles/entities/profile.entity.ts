@@ -11,13 +11,16 @@ export class Profile extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @ApiProperty()
     @OneToOne(() => Presentation)
     @JoinColumn()
     presentation: Presentation;
 
+    @ApiProperty()
     @OneToMany(() => Language, language => language.profile)
     languages: Language [];
 
+    @ApiProperty()
     @OneToMany(() => Competence, competence => competence.profile)
     competences: Competence [];
 
