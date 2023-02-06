@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/')
   const config = new DocumentBuilder()
     .setTitle('Find_a_dev')
     .setDescription('The Find_a_dev API description')
