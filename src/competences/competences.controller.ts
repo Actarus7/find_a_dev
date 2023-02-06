@@ -9,7 +9,7 @@ export class CompetencesController {
 
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
-    return this.competencesService.create(createCompetenceDto);
+    return this.competencesService.createCompetences(createCompetenceDto);
   }
 
   @Get()

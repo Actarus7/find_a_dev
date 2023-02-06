@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
+import { Competence } from './entities/competence.entity';
 
 @Injectable()
 export class CompetencesService {
-  create(createCompetenceDto: CreateCompetenceDto) {
-    return 'This action adds a new competence';
+  
+  createCompetences(createCompetenceDto: CreateCompetenceDto | any) {
+    const newCompetence = Competence.save(createCompetenceDto);
+    return newCompetence;
   }
 
   findAll() {
-    return `This action returns all competences`;
+    return Competence.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} competence`;
+    return Competence.findOneBy({id})
   }
 
   update(id: number, updateCompetenceDto: UpdateCompetenceDto) {
