@@ -43,10 +43,11 @@ export class CompetencesService
   async remove(id: number | any)
   {
     const competence = await Competence.remove(id);
-    
+
     if (competence)
     {
       return `This action removes a #${id} competence`;
-    }
+    };
+    return undefined;
   }
 }
