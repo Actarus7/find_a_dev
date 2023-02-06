@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
+import { Presentation } from './entities/presentation.entity';
 
 @Injectable()
-export class PresentationsService {
-  create(createPresentationDto: CreatePresentationDto) {
-    return 'This action adds a new presentation';
+export class PresentationsService
+{
+  create(createPresentationDto: CreatePresentationDto | any)
+  {
+    const newPresentation = Presentation.save(createPresentationDto)
+    return newPresentation;
   }
 
-  findAll() {
-    return `This action returns all presentations`;
+  findAll()
+  {
+    return Presentation.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} presentation`;
+  findOne(id: number)
+  {
+    return Presentation.findOneBy({ id });
   }
 
-  update(id: number, updatePresentationDto: UpdatePresentationDto) {
-    return `This action updates a #${id} presentation`;
+  async update(id: number, updatePresentationDto: UpdatePresentationDto)
+  {
+    const newPresentation = await Presentation.update(id, updatePresentationDto);
+    if (newPresentation)
+    {
+      return await Presentation.findOneBy({ id });
+    };
+    return undefined;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} presentation`;
+  async remove(id: number | any)
+  {
+    const presentation = await Presentation.remove(id);
+
+    if (presentation)
+    {
+      return `This action removes a #${id} presentation`;
+    }
+    return undefined
   }
 }
