@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 /**
@@ -8,6 +8,9 @@ import { Column, Entity, ManyToOne } from "typeorm";
  */
 @Entity('friendships')
 export class Friendship {
+    @ApiProperty({description : "l'Id du friendship"})
+    @PrimaryGeneratedColumn({type : "int"})
+    id : number
 
     /** Le Friend a-t-il accepté la demande */
     @ApiProperty({description : "Le Friend a-t-il accepté la demande"})
