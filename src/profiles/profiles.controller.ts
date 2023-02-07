@@ -17,12 +17,17 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { LanguagesService } from 'src/languages/languages.service';
+import { CompetencesService } from 'src/competences/competences.service';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Profiles')
 @Controller('profiles')
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService) { }
+  constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly languageService: LanguagesService,
+    private readonly competencesService: CompetencesService) { }
 
   /** Création d'un nouveau profil   
    * Nécessite : 
@@ -40,6 +45,7 @@ export class ProfilesController {
     // Récupère l'id du user connecté puis vérifie qu'il n'a pas déjà un profil existant
     const userIdLogged = req.user.id;
 
+
     const isUserProfileAlreadyExists = await this.profilesService.findOneByUserId(userIdLogged);
 
     if (isUserProfileAlreadyExists.length > 0) {
@@ -56,7 +62,28 @@ export class ProfilesController {
 
 
     // Vérifie que les langages à ajouter existent
-    // const areLanguagesExist = await
+    const allLanguages = await this.languageService.findAll();
+    const arrayAllLanguages = allLanguages.map((elm) => elm.id);
+
+    createProfileDto.languages.forEach(language => {
+      if (!arrayAllLanguages.includes(language.id)) {
+        throw new BadRequestException("Un des langages que vous essayez d'ajouter n'existe pas");
+      };
+    });
+
+
+    // Vérifie que les compétences à ajouter existent
+    const allCompetences = await this.competencesService.findAll();
+    const arrayAllCompetences = allCompetences.map((elm) => elm.id);
+
+    createProfileDto.competences.forEach(competence => {
+      if (!arrayAllCompetences.includes(competence.id)) {
+        throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
+      };
+    });
+
+
+    // Création du nouveau profil
     const newProfile = await this.profilesService.create(createProfileDto, userIdLogged);
 
     return newProfile;
