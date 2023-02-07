@@ -16,13 +16,18 @@ export class Profile extends BaseEntity {
   @JoinColumn()
   presentation: Presentation;
 
-    @ApiProperty()
-    @ManyToMany(() => Language, language => language.profiles)
-    @JoinTable()
-    languages: Language[];
+  @ApiProperty()
+  @ManyToMany(() => Language, language => language.profiles)
+  @JoinTable()
+  languages: Language[];
 
-    @ApiProperty()
-    @OneToMany(() => Competence, competence => competence.profile)
-    competences: Competence[];
+  @ApiProperty()
+  @OneToMany(() => Competence, competence => competence.profile)
+  competences: Competence[];
+
+  @ApiProperty({type : () => User})
+  @JoinColumn()
+  @OneToOne(() => User)
+  user: User;
 
 };

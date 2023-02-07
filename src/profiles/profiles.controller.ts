@@ -18,10 +18,12 @@ export class ProfilesController {
     return newProfile;
   };
 
+  
   @Get()
   findAll() {
     return this.profilesService.findAll();
   };
+
 
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
@@ -36,10 +38,12 @@ export class ProfilesController {
     return profile;
   };
 
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
     return this.profilesService.update(+id, updateProfileDto);
   };
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

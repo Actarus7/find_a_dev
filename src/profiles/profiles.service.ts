@@ -20,8 +20,10 @@ export class ProfilesService {
       relations: {
         presentation: true,
         languages: true,
-        competences: true
-      }
+        competences: true,
+        user: true
+      },
+      select: { user: { id: true } },
     });
 
     if (profiles) {
@@ -36,8 +38,10 @@ export class ProfilesService {
       relations: {
         presentation: true,
         languages: true,
-        competences: true
+        competences: true,
+        user: true
       },
+      select: { user: { id: true } },
       where: { id }
     });
 

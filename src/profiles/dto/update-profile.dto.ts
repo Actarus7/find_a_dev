@@ -6,9 +6,6 @@ import { Presentation } from 'src/presentations/entities/presentation.entity';
 import { CreateProfileDto } from './create-profile.dto';
 
 export class UpdateProfileDto extends PartialType(CreateProfileDto) {
-  @ApiProperty()
-  @IsNumber()
-  presentation?: Presentation;
 
   @ApiProperty()
   @IsArray()
