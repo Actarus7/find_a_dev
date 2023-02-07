@@ -17,12 +17,12 @@ import { CompetencesService } from './competences.service';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
 
+
+/**Class permettant le contrôle des données entrantes pour les requête competences */
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Competences')
 /**décorateur de contrôle qui récupère toutes les données de CompetencesService */
 @Controller('competences')
-
-/**Class permettant le contrôle des données entrantes pour les requête competences */
 export class CompetencesController {
   constructor(private readonly competencesService: CompetencesService) {}
 
