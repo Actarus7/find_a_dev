@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsString } from "class-validator";
 import { IsNotEmpty } from "class-validator";
 
 export class CreateCompetenceDto {
@@ -7,5 +7,6 @@ export class CreateCompetenceDto {
     @IsString()
     @IsNotEmpty()
     description: string;
-}
+
+};
 

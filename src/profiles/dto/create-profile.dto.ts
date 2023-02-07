@@ -20,7 +20,7 @@ export class CreateProfileDto {
   competences: Competence[];
 
   @ApiProperty()
-  @IsObject()
-  user: User;
+  @IsNumber()
+  user: number;
 
 }; 
