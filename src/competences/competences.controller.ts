@@ -4,26 +4,34 @@ import { CompetencesService } from './competences.service';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
 
+/**décorateur de contrôle qui récupère toutes les données de CompetencesService */
 @Controller('competences')
+
+/**Class permettant le contrôle des données entrantes pour les requête competences */
 export class CompetencesController {
+  
   constructor(private readonly competencesService: CompetencesService) {}
 
+  /**Controle prealable a l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
     return this.competencesService.createCompetences(createCompetenceDto);
   }
 
+  /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
   findAll() {
     return this.competencesService.findAll();
   }
 
+  /**Contrôle préalable à la récupération d'une compétence grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   findOne(@Param('id') id: string) {
     return this.competencesService.findOne(+id);
   }
 
+  /**Contrôle préalable à la modification d'une compétence */
   @Patch(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async update(@Param('id') id: number, @Body() updateCompetenceDto: UpdateCompetenceDto) {
@@ -39,7 +47,7 @@ export class CompetencesController {
   };
 
 
-
+  /**Contrôle préalable à la suppression d'une compétence */
   @Delete(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async remove(@Param('id') id: number) {
