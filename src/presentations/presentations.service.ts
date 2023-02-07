@@ -3,7 +3,14 @@ import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { Presentation } from './entities/presentation.entity';
 
-/**Décorateur qui permet d'injecter la dépendance PresentationsService responsable du stockage et de la récupération des données dans la BDD, utilisées par PresentationsController */
+/**
+ * Ensemble des services pour la table Présentations:
+ * 
+ * * **createCompetences**  : permet de créer une présentation dans la BDD
+ * * **finAll**             : permet de récupérer toutes les présentations de la BDD
+ * * **findOne**            : permet de récupérer une présentation de la BDD par son id
+ * * **update**             : permet de modifier une présentation de la BDD par son id
+ * * **remove**             : permet de supprimer une présentation de la BDD par son id */
 @Injectable()
 /**Class permettant la gestion des requètes SQL pour les compétences */
 export class PresentationsService

@@ -4,7 +4,13 @@ import { UpdateCompetenceDto } from './dto/update-competence.dto';
 import { Competence } from './entities/competence.entity';
 
 /**
- * Décorateur qui permet d'injecter la dépendance CompetencesService responsable du stockage et de la récupération des données dans la BDD, utilisées par CompetencesController
+ * Ensemble des services pour la table Competences:
+ * 
+ * * **createCompetences**  : permet de créer une compétence dans la BDD
+ * * **finAll**             : permet de récupérer toutes les compétences de la BDD
+ * * **findOne**            : permet de récupérer une compétence de la BDD par son id
+ * * **update**             : permet de modifier une compétence de la BDD par son id
+ * * **remove**             : permet de supprimer une compétence de la BDD par son id
  */
 @Injectable()
 /**Class permettant la gestion des requètes SQL pour les compétences */
