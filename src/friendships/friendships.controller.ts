@@ -138,4 +138,35 @@ export class FriendshipsController {
     };
   }
 
+  /**
+   * Permet la suppression des liaisons entre 2 users
+   * 
+   * @param friendPseudo  Nom du user que l'on souhaite lier
+   * @param req           La requete contenant le token
+   * @returns             { delete : true }
+   */
+  @UseGuards(new JwtAuthGuard())
+  @Delete(':friendPseudo')
+  async remove(@Param('friendPseudo') friendPseudo: string, @Request() req) {
+    const userPseudo = req.user.pseudo;
+
+    const friend = await this.usersService.findOneByPseudo(friendPseudo);
+
+    if (friend === null) {
+      throw new NotFoundException('This pseudo does not exist');
+    }
+    
+    const status = await this.friendshipsService.findStatusWithPseudo( userPseudo, friendPseudo );
+
+    if (status.code === 0 ){
+      throw new NotFoundException("This relation does not existe")
+    }
+
+    await this.friendshipsService.remove(userPseudo,friendPseudo)
+    return {
+      statusCode: 200,
+      message: 'Delete done',
+      data: { delete : true },
+    }
+  }
 }
