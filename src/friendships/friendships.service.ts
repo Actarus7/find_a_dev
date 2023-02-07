@@ -215,4 +215,35 @@ export class FriendshipsService {
     }) 
   }
 
+  /**
+   * Récupération des relations validées dans les 2 sens
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @returns             Friendships {friend => user Allowed} & {user => friend Allowed}
+   */
+  async findAllDone(userPseudo : string) {
+    return await Friendship.find({
+      relations : {
+        user : true , 
+        friend : true
+      },
+      where : {
+        user : {pseudo : userPseudo} ,
+        friend : { 
+          friendships : {
+            allowed :true,
+            friend : { pseudo : userPseudo}
+          }
+        },
+        allowed : true
+      },
+      select : {
+        allowed : true,
+        user : { pseudo : true} ,
+        friend : { pseudo : true} 
+      },
+    }) 
+  }
+
+
 }
