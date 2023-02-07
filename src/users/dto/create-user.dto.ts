@@ -8,7 +8,7 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  surname: string;
+  firstname: string;
 
   @ApiProperty()
   @IsString()
