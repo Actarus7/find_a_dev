@@ -164,5 +164,28 @@ export class FriendshipsService {
     return friendship ;
   }
 
+  remove(id: number) {
+    return `This action removes a #${id} friendship`;
+  }
+  
+/*
+  async findAll() {
+    return await Friendship.find({
+      relations : {
+        user : true , 
+        friend : true
+      },
+      where : {
+        user : {pseudo : "jo"} , 
+        friend : {pseudo : "jo2"}
+      },
+      select : {
+        allowed : true,
+        user : { pseudo : true} ,
+        friend : { pseudo : true} 
+      },
+    }) 
+  }
+*/
 
 }
