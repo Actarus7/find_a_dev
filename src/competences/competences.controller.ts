@@ -26,6 +26,8 @@ import { UpdateCompetenceDto } from './dto/update-competence.dto';
 export class CompetencesController {
   constructor(private readonly competencesService: CompetencesService) {}
 
+
+
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
@@ -37,18 +39,34 @@ export class CompetencesController {
     }
   }
 
+
+
   /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
   findAll() {
-    return this.competencesService.findAll();
+    const allCompetences = this.competencesService.findAll();
+    return {
+      statusCode: 200,
+      message: "Récupération de toutes les compétences réussie",
+      data: allCompetences
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération d'une compétence grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   findOne(@Param('id') id: string) {
-    return this.competencesService.findOne(+id);
+    const oneCompetence = this.competencesService.findOne(+id);
+    return {
+      statusCode: 200,
+      message: "Récupération d'une compétence réussie",
+      data: oneCompetence
+    }
   }
+
+
 
   /**Contrôle préalable à la modification d'une compétence */
   @Patch(':id')
@@ -65,7 +83,7 @@ export class CompetencesController {
     const updatedCompetences = await this.competencesService.update(+id, updateCompetenceDto);
     return {
       statusCode: 201,
-      message: 'Modifications de la compétence enregistrées',
+      message: 'Modifications de la présentation enregistrées',
       data: updatedCompetences
     }
   }
