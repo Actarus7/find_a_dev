@@ -35,18 +35,33 @@ export class PresentationsController {
     }
   }
 
+
+
   /**Contrôle préalable à la récupération de toutes les présentations */
   @Get()
   findAll() {
-    return this.presentationsService.findAll();
+    const allPresentation = this.presentationsService.findAll();
+    return {
+      statusCode: 200,
+      message: "Récupération réussie de toutes les présentations",
+      data: allPresentation
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   findOne(@Param('id') id: string) {
-    return this.presentationsService.findOne(+id);
+    const onePresentation = this.presentationsService.findOne(+id);
+    return {
+      statusCode: 200,
+      message: "Récupération réussie d'une présentation"
+    }
   }
+
+
 
   /**Contrôle préalable à la modification d'une présentation */
   @Patch(':id')
@@ -66,6 +81,8 @@ export class PresentationsController {
       data: updatedPresentation
     }
   }
+
+
 
   /**Contrôle préalable à la suppression d'une compétence */
   @Delete(':id')
