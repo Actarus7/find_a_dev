@@ -13,7 +13,7 @@ export class Competence extends BaseEntity{
     id: number;
 
     @ApiProperty()
-    @Column()
+    @Column({type: 'varchar'})
     description: string;
 
     /**liaison entre competence et profile */
