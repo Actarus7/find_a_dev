@@ -15,7 +15,7 @@ export class Presentation extends BaseEntity {
   id: number;
 
   @ApiProperty()
-  @Column()
+  @Column({type: 'varchar'})
   description: string;
 
   @ApiProperty({ type: () => Profile })

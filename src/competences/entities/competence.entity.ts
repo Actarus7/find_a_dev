@@ -2,7 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Profile } from "src/profiles/entities/profile.entity";
 import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
-
+/**
+ * Entity représentant les liaisons entre competences
+ */
 @Entity('competences')
 export class Competence extends BaseEntity{
 
@@ -11,9 +13,10 @@ export class Competence extends BaseEntity{
     id: number;
 
     @ApiProperty()
-    @Column()
+    @Column({type: 'varchar'})
     description: string;
 
+    /**liaison entre competence et profile */
     @ApiProperty()
     @ManyToMany(() => Profile, (profile) => profile.competences)
     profiles: Profile[];

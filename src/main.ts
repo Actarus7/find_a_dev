@@ -7,7 +7,7 @@ import { HttpExceptionFilter } from './errors/AllExceptionsFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/') ;
+  app.setGlobalPrefix('api/');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -15,7 +15,6 @@ async function bootstrap() {
     .setTitle('Find_a_dev')
     .setDescription('The Find_a_dev API description')
     .setVersion('1.0')
-    .addTag('Find_a_dev')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
