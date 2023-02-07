@@ -48,14 +48,15 @@ export class LanguagesService {
     };
     
     return undefined;
-  }
+  };
+
 
   async remove(id: number) {
     const deleteLanguage = await Language.findOneBy({id});
     deleteLanguage.remove();
 
     if (deleteLanguage) {
-      return deleteLanguage
+      return deleteLanguage;
     };
 
     return undefined;

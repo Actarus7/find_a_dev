@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Competence } from "src/competences/entities/competence.entity";
 import { Language } from "src/languages/entities/language.entity";
 import { Presentation } from "src/presentations/entities/presentation.entity";
+import { User } from "src/users/entities/user.entity";
 import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("profiles")
@@ -15,6 +16,10 @@ export class Profile extends BaseEntity {
     @OneToOne(() => Presentation)
     @JoinColumn()
     presentation: Presentation;
+
+    @ApiProperty()
+    @OneToOne(() => User)
+    user: User;
 
     @ApiProperty()
     @OneToMany(() => Language, language => language.profile)

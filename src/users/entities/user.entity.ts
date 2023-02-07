@@ -26,7 +26,7 @@ export class User extends BaseEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  surname: string;
+  firstname: string;
 
   @ApiProperty()
   @Column({ type: 'varchar' })

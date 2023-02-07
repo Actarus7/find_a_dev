@@ -55,6 +55,8 @@ export class LanguagesController {
     return this.languagesService.update(+id, updateLanguageDto);
   };
 
+
+  /** Supprimer un langage */
   @Delete(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async remove(@Param('id') id: number) {
