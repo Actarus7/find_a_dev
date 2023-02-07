@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -20,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST,
@@ -34,7 +33,7 @@ import { AuthModule } from './auth/auth.module';
         Presentation,
         Language,
         Friendship,
-        Competence /* join(__dirname, '*', '.entity.{ts,js}') */,
+        Competence, /* join(__dirname, '*', '.entity.{ts,js}') */,
       ],
       synchronize: true,
     }),
