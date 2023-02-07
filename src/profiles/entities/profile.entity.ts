@@ -22,7 +22,8 @@ export class Profile extends BaseEntity {
   languages: Language[];
 
   @ApiProperty()
-  @OneToMany(() => Competence, competence => competence.profile)
+  @ManyToMany(() => Competence, competence => competence.profiles)
+  @JoinTable()
   competences: Competence[];
 
   @ApiProperty({type : () => User})

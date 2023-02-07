@@ -6,6 +6,7 @@ import { Language } from './entities/language.entity';
 @Injectable()
 export class LanguagesService {
 
+  /** Création d'un nouveau langage */
   async create(createLanguageDto: CreateLanguageDto | any) {
     const newLanguage = await Language.save(createLanguageDto);
 
@@ -17,6 +18,7 @@ export class LanguagesService {
   };
 
 
+  /** Récupération de tous les langages */
   async findAll() {
     const languages = await Language.find();
 
@@ -28,6 +30,7 @@ export class LanguagesService {
   };
 
 
+  /** Récupération d'un langage par son id (avec les relations) */
   async findOne(id: number) {
     const language = await Language.findOneBy({id});
 

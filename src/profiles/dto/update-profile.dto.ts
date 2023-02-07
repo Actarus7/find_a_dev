@@ -14,4 +14,5 @@ export class UpdateProfileDto extends PartialType(CreateProfileDto) {
   @ApiProperty()
   @IsArray()
   competences?: Competence[];
-}
+
+};
