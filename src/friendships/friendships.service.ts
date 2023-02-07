@@ -245,5 +245,25 @@ export class FriendshipsService {
     }) 
   }
 
+  /**
+   * Permet la suppression des liaisons entre 2 users
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @param friendPseudo  Pseudo de la cible
+   * @returns void
+   */
+  async remove(userPseudo : string, friendPseudo  : string) {
+    
+    (await Friendship.findOneBy({
+      user : {pseudo : userPseudo} , 
+      friend : {pseudo : friendPseudo}
+    })).remove() ,
+    (await Friendship.findOneBy({
+      user : {pseudo : friendPseudo} , 
+      friend : {pseudo : userPseudo}
+    })).remove()
+    
+  }
+  
 
 }
