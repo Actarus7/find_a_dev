@@ -15,13 +15,38 @@ export class ProfilesService {
     return undefined;
   };
 
-  findAll() {
-    return `This action returns all profiles`;
-  }
+  async findAll() {
+    const profiles = await Profile.find({
+      relations: {
+        presentation: true,
+        languages: true,
+        competences: true
+      }
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
-  }
+    if (profiles) {
+      return profiles;
+    };
+
+    return undefined;
+  };
+
+  async findOne(id: number) {
+    const profile = await Profile.find({
+      relations: {
+        presentation: true,
+        languages: true,
+        competences: true
+      },
+      where: { id }
+    });
+
+    if (profile) {
+      return profile;
+    };
+
+    return undefined;
+  };
 
   update(id: number, updateProfileDto: UpdateProfileDto) {
     return `This action updates a #${id} profile`;

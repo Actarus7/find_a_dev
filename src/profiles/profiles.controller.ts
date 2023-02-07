@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Bind, ParseIntPipe, BadRequestException } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -9,6 +9,10 @@ export class ProfilesController {
 
   @Post()
   async create(@Body() createProfileDto: CreateProfileDto) {
+    
+    // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
+    // Faire une findOne Profil par présentation id ...
+    
     const newProfile = await this.profilesService.create(createProfileDto);
 
     return newProfile;
@@ -20,8 +24,16 @@ export class ProfilesController {
   };
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profilesService.findOne(+id);
+  @Bind(Param('id', new ParseIntPipe()))
+  async findOne(@Param('id') id: string) {
+
+    const profile = await this.profilesService.findOne(+id);
+    
+    if (profile.length < 0) {
+      throw new BadRequestException('Aucun profil à afficher');
+    };
+    
+    return profile;
   };
 
   @Patch(':id')

@@ -8,10 +8,11 @@ export class CreateProfileDto {
     @IsNumber()
     presentation: Presentation;
 
-    @IsNumber({}, { each: true })
+    @IsArray()
     languages: Language[];
 
-    @IsNumber({}, { each: true })
+    // @IsNumber({}, { each: true }) // ne marche plus car Array d'Objets Competence
+    @IsArray()
     competences: Competence[];
 
 };
