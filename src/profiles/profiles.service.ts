@@ -68,7 +68,7 @@ export class ProfilesService {
 
   /** Récupère un profil par le userId */
   async findOneByUserId(userId) {
-    const profile = await Profile.find({where: {user: {id: userId}}});    
+    const profile = await Profile.find({ where: { user: { id: userId } } });
 
     if (profile) {
       return profile;
@@ -79,9 +79,9 @@ export class ProfilesService {
 
   /** Récupère un profil par le presentationId */
   async findOneByPresentationId(presentationId) {
-    
-    const profile = await Profile.find({where: {presentation: {id: presentationId}}});
-    
+
+    const profile = await Profile.find({ where: { presentation: { id: presentationId } } });
+
 
     if (profile) {
       return profile;
@@ -93,10 +93,12 @@ export class ProfilesService {
 
   /** Modifie un profil (langages et compétences seulement - annule et remplace les existants) */
   async update(id: number, updateProfileDto: UpdateProfileDto | any) {
+
     const profile = await Profile.findOneBy({ id });
     profile.languages = updateProfileDto.languages;
     profile.competences = updateProfileDto.competences;
     await Profile.save(profile);
+
 
     if (profile) {
       return this.findOne(id);
