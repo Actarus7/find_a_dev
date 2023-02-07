@@ -128,5 +128,22 @@ export class FriendshipsService {
     }
   }
 
+  /**
+   * Permet d'obtenir le statut d'une relation en fonction des pseudos de 2 user
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @param friendPseudo  Pseudo de la cible
+   * @returns le statut actuel du lien :
+   * * 0 : N'existe pas
+   * * 1 : En attente de votre part
+   * * 2 : En attente de la part de l'autre user
+   * * 3 : Le lien est partagé
+   */
+  async findStatusWithPseudo(userPseudo : string, friendPseudo  : string)  : Promise<{status : string,code:number}>
+  {
+    const friendships = await this.findBoth(userPseudo, friendPseudo)
+    return this.findStatusWithObject(friendships)
+  }
+
 
 }
