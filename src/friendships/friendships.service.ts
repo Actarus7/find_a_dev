@@ -40,4 +40,32 @@ export class FriendshipsService {
       }).save(),
     ]
   }
+  /**
+   * Permet de trouver la relation user => friend
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @param friendPseudo  Pseudo de la cible
+   * @returns             la relation user => friend
+   */
+  async findOne(userPseudo : string, friendPseudo  : string) : Promise<Friendship | undefined>
+  {
+    
+    return (await Friendship.find(
+      { 
+        relations : {
+          user : true , 
+          friend : true
+        },
+        where : {
+          user : {pseudo : userPseudo} , 
+          friend : {pseudo : friendPseudo}
+        },
+        select : {
+          allowed : true,
+          user : { pseudo : true} ,
+          friend : { pseudo : true} 
+        },
+      }))[0]  ;
+  }
+
 }
