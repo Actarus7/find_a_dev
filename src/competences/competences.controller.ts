@@ -29,7 +29,12 @@ export class CompetencesController {
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
-    return this.competencesService.createCompetences(createCompetenceDto);
+    const createdCompetences = this.competencesService.createCompetences(createCompetenceDto);
+    return {
+      statusCode: 201,
+      message: "Création d'une compétence réussie",
+      data: createdCompetences
+    }
   }
 
   /**Contrôle préalable à la récupération de toutes les compétences */
@@ -57,8 +62,12 @@ export class CompetencesController {
     if (!isCompetenceExists) {
       throw new BadRequestException('Compétence non trouvée');
     }
-
-    return await this.competencesService.update(+id, updateCompetenceDto);
+    const updatedCompetences = await this.competencesService.update(+id, updateCompetenceDto);
+    return {
+      statusCode: 201,
+      message: 'Modifications de la compétence enregistrées',
+      data: updatedCompetences
+    }
   }
 
   /**Contrôle préalable à la suppression d'une compétence */
@@ -72,6 +81,10 @@ export class CompetencesController {
     }
     const deletedCompetence = await isCompetenceExists.remove();
 
-    return deletedCompetence;
+    return {
+      statusCode: 201,
+      message: 'Suppression de la compétence enregistrées',
+      data:  deletedCompetence
+    };
   }
 }
