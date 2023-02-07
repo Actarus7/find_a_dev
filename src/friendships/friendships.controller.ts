@@ -55,7 +55,10 @@ export class FriendshipsController {
     return {
       statusCode : 200,
       message : "Friendship status",
-      data : status
+      data : {
+        users : [userPseudo,friendPseudo],
+        status : status.status,
+      }
 
     }
 
