@@ -7,9 +7,16 @@ import { Profile } from './entities/profile.entity';
 export class ProfilesService {
 
   /** Crée d'un nouveau profil */
-  async create(createProfileDto: CreateProfileDto | any) {
+  async create(createProfileDto: CreateProfileDto | any, userIdLogged: number | any) {
 
-    const newProfile = await Profile.save(createProfileDto);
+
+    const newProfile = new Profile();
+    newProfile.languages = createProfileDto.languages;
+    newProfile.competences = createProfileDto.competences;
+    newProfile.presentation = createProfileDto.presentation;
+    newProfile.user = userIdLogged;
+
+    await newProfile.save();
 
     if (newProfile) {
       return newProfile;
@@ -51,6 +58,29 @@ export class ProfilesService {
       select: { user: { id: true } },
       where: { id }
     });
+
+    if (profile) {
+      return profile;
+    };
+
+    return undefined;
+  };
+
+
+  /** Récupère un profil par le userId */
+  async findOneByUserId(userId) {
+    const profile = await Profile.find({where: {user: userId}});
+
+    if (profile) {
+      return profile;
+    };
+
+    return undefined;
+  };
+
+  /** Récupère un profil par le presentationId */
+  async findOneByPresentationId(presentationId) {
+    const profile = await Profile.find({where: {presentation: presentationId}});
 
     if (profile) {
       return profile;

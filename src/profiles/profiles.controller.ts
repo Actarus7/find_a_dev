@@ -9,11 +9,14 @@ import {
   Bind,
   ParseIntPipe,
   BadRequestException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Profiles')
@@ -29,18 +32,42 @@ export class ProfilesController {
    * * que les compétences existent
    * * que le présentation existe et ne soit pas déjà liée à un autre profil
    */
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createProfileDto: CreateProfileDto) {
+  async create(@Body() createProfileDto: CreateProfileDto, @Request() req) {
+
+
+    // Récupère l'id du user connecté puis vérifie qu'il n'a pas déjà un profil existant
+    const userIdLogged = req.user.id;
+
+    const isUserProfileAlreadyExists = await this.profilesService.findOneByUserId(userIdLogged);
+
+    if (isUserProfileAlreadyExists.length > 0) {
+      throw new BadRequestException('Vous avez déjà un profil existant');
+    };
+
 
     // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
-    // Faire une findOne Profil par présentation id ...
+    const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
+
+    if (isPresentationProfileAlreadyExists.length > 0) {
+      throw new BadRequestException('Un profil existe déjà avec cette présentation');
+    };
 
 
-    const newProfile = await this.profilesService.create(createProfileDto);
+    // Vérifie que les langages à ajouter existent
+    // const areLanguagesExist = await
+    const newProfile = await this.profilesService.create(createProfileDto, userIdLogged);
 
     return newProfile;
   };
 
+
+  @Get('users/:id')
+  @Bind(Param('id', new ParseIntPipe()))
+  async findProfilByUserId(@Param('id') id: number) {
+    return this.profilesService.findOneByUserId(id);
+  };
 
   /** Récupèration de tous les profils */
   @Get()
@@ -59,7 +86,7 @@ export class ProfilesController {
   /** Récupération d'un profil par son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const profile = await this.profilesService.findOne(+id);
 
 
