@@ -9,13 +9,15 @@ import { LocalAuthGuard } from './local-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  /**
+   * Login permettant la création d'un token pour l'user se connectant.
+   * @param req
+   * @returns le tokken contenant le pseudo et l'id de l'utilisateur
+   */
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiBody({ type: LoginDto })
   async login(@Request() req) {
-    console.log('//////', req.user);
-
     return this.authService.login(req.user);
   }
 }

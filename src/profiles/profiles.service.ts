@@ -5,7 +5,10 @@ import { Profile } from './entities/profile.entity';
 
 @Injectable()
 export class ProfilesService {
+
+  /** Crée d'un nouveau profil */
   async create(createProfileDto: CreateProfileDto | any) {
+
     const newProfile = await Profile.save(createProfileDto);
 
     if (newProfile) {
@@ -15,6 +18,8 @@ export class ProfilesService {
     return undefined;
   };
 
+
+  /** Récupère tous les profils (avec relations) */
   async findAll() {
     const profiles = await Profile.find({
       relations: {
@@ -33,6 +38,8 @@ export class ProfilesService {
     return undefined;
   };
 
+
+  /** Récupère un profil par son id (avec relations) */
   async findOne(id: number) {
     const profile = await Profile.find({
       relations: {
@@ -52,11 +59,33 @@ export class ProfilesService {
     return undefined;
   };
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
-  }
-}
+  /** Modifie un profil (langages et compétences seulement - annule et remplace les existants) */
+  async update(id: number, updateProfileDto: UpdateProfileDto | any) {
+    const profile = await Profile.findOneBy({ id });
+    profile.languages = updateProfileDto.languages;
+    profile.competences = updateProfileDto.competences;
+    await Profile.save(profile);
+
+    if (profile) {
+      return this.findOne(id);
+    };
+
+    return undefined;
+  };
+
+
+  /** Supprime un profil */
+  async remove(id: number) {
+
+    const deleteProfile = await Profile.findOneBy({ id });
+    deleteProfile.remove();
+
+    if (deleteProfile) {
+      return deleteProfile;
+    };
+
+    return undefined;
+  };
+
+};
