@@ -145,5 +145,24 @@ export class FriendshipsService {
     return this.findStatusWithObject(friendships)
   }
 
+  
+  /**
+   * Permet de valider l'état d'une relation
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @param friendPseudo  Pseudo de la cible
+   * @returns             la relation mise à jour
+   */
+  async promote(userPseudo : string, friendPseudo  : string) {
+    
+    const friendship = await Friendship.findOneBy({
+      user : {pseudo : userPseudo} , 
+      friend : {pseudo : friendPseudo}
+    })
+    friendship.allowed = true ;
+    await friendship.save() ; 
+    return friendship ;
+  }
+
 
 }
