@@ -35,7 +35,13 @@ export class UsersController {
     // Création du user
     const user = await this.usersService.create(createUserDto, hash);
 
-    return user;
+    return {
+      statusCode: 201,
+      message: 'Utilisateur enregistré',
+      data: {
+        user,
+      },
+    };
   }
   /**
    * Permet la modification du pseudo et/ou de l'adresse du user connecté
@@ -54,6 +60,12 @@ export class UsersController {
       updateUserDto,
     );
 
-    return userUpdate;
+    return {
+      statusCode: 201,
+      message: 'Modifications enregistrées',
+      data: {
+        userUpdate,
+      },
+    };
   }
 }
