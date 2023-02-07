@@ -113,5 +113,29 @@ export class FriendshipsController {
       },
     };
   }
+  
+  /**
+   * Ensemble des relation d'un user
+   * 
+   * @param req     La requete contenant le token
+   * @returns       Objet contenant 3 listes de liaisons:
+   * * En attente du user
+   * * En attente d'un autre
+   * * Validées
+   */
+  @UseGuards(new JwtAuthGuard())
+  @Get()
+  async findall(@Request() req) {
+    const userPseudo = req.user.pseudo;
+    return {
+      statusCode: 200,
+      message: 'Friendships status',
+      data: {
+        waitForMe: (await this.friendshipsService.findAllWaitForMe(userPseudo)).map(item => item.friend.pseudo),
+        waitForOther: (await this.friendshipsService.findAllWaitForOther(userPseudo)).map(item => item.user.pseudo),
+        allowed : (await this.friendshipsService.findAllDone(userPseudo)).map(item => item.friend.pseudo)
+      },
+    };
+  }
 
 }
