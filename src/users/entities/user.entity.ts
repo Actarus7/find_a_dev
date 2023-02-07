@@ -26,7 +26,7 @@ export class User extends BaseEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  surname: string;
+  firstname: string;
 
   @ApiProperty()
   @Column({ type: 'varchar' })
@@ -59,15 +59,15 @@ export class User extends BaseEntity {
 
   @ApiProperty()
   @Column({ type: 'varchar' })
-  adress_1: string;
+  address_1: string;
 
   @ApiProperty()
   @Column({ type: 'varchar', nullable: true })
-  adress_2: string;
+  address_2: string;
 
   @ApiProperty()
   @Column({ type: 'varchar', nullable: true })
-  adress_3: string;
+  address_3: string;
 
   @ApiProperty()
   @Column({ type: 'varchar' })

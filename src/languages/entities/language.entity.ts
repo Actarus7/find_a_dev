@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Profile } from "src/profiles/entities/profile.entity";
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity("languages")
+@Unique(['name'])
 export class Language extends BaseEntity {
 
     @ApiProperty()

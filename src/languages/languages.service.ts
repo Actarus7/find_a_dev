@@ -1,26 +1,65 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
+import { Language } from './entities/language.entity';
 
 @Injectable()
 export class LanguagesService {
-  create(createLanguageDto: CreateLanguageDto) {
-    return 'This action adds a new language';
-  }
 
-  findAll() {
-    return `This action returns all languages`;
-  }
+  async create(createLanguageDto: CreateLanguageDto | any) {
+    const newLanguage = await Language.save(createLanguageDto);
 
-  findOne(id: number) {
-    return `This action returns a #${id} language`;
-  }
+    if (newLanguage) {
+      return newLanguage;
+    };
 
-  update(id: number, updateLanguageDto: UpdateLanguageDto) {
-    return `This action updates a #${id} language`;
-  }
+    return undefined;
+  };
 
-  remove(id: number) {
-    return `This action removes a #${id} language`;
-  }
-}
+
+  async findAll() {
+    const languages = await Language.find();
+
+    if (languages) {
+      return languages;
+    };
+
+    return languages;
+  };
+
+
+  async findOne(id: number) {
+    const language = await Language.findOneBy({id});
+
+    if (language) {
+      return language;
+    };
+
+    return language;
+  };
+
+
+  async update(id: number, updateLanguageDto: UpdateLanguageDto) {
+
+    const updateLanguage = await Language.update(+id, updateLanguageDto);
+
+    if (updateLanguage) {
+      return Language.findOneBy({id});
+    };
+    
+    return undefined;
+  };
+
+
+  async remove(id: number) {
+    const deleteLanguage = await Language.findOneBy({id});
+    deleteLanguage.remove();
+
+    if (deleteLanguage) {
+      return deleteLanguage;
+    };
+
+    return undefined;
+  };
+
+};

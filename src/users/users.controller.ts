@@ -5,13 +5,14 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   UseGuards,
+  Patch,
   Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { AuthService } from '../auth/auth.service';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,5 +28,19 @@ export class UsersController {
     const user = await this.usersService.create(createUserDto, hash);
 
     return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  @UseInterceptors(ClassSerializerInterceptor)
+  async update(@Body() updateUserDto: UpdateUserDto, @Request() req) {
+    const userLogged = req.user.id;
+
+    const userUpdate = await this.usersService.update(
+      userLogged,
+      updateUserDto,
+    );
+
+    return userUpdate;
   }
 }
