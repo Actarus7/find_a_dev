@@ -30,15 +30,15 @@ export class CreateUserDto {
   departement: string;
 
   @IsString()
-  adress_1: string;
+  address_1: string;
 
   @IsString()
   @IsOptional()
-  adress_2: string;
+  address_2: string;
 
   @IsString()
   @IsOptional()
-  adress_3: string;
+  address_3: string;
 
   @IsPostalCode('any')
   zipcode: string;

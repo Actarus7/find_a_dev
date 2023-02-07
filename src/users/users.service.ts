@@ -16,9 +16,9 @@ export class UsersService {
     newUser.country = createUserDto.country;
     newUser.region = createUserDto.region;
     newUser.departement = createUserDto.departement;
-    newUser.adress_1 = createUserDto.adress_1;
-    newUser.adress_2 = createUserDto.adress_2;
-    newUser.adress_3 = createUserDto.adress_3;
+    newUser.address_1 = createUserDto.address_1;
+    newUser.address_2 = createUserDto.address_2;
+    newUser.address_3 = createUserDto.address_3;
     newUser.zipcode = createUserDto.zipcode;
 
     await newUser.save();

@@ -8,8 +8,10 @@ export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
   @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(createProfileDto);
+  async create(@Body() createProfileDto: CreateProfileDto) {
+    const newProfile = await this.profilesService.create(createProfileDto);
+
+    return newProfile;
   };
 
   @Get()

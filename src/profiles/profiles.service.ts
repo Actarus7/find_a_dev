@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Profile } from './entities/profile.entity';
 
 @Injectable()
 export class ProfilesService {
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
+  async create(createProfileDto: CreateProfileDto | any) {
+    const newProfile = await Profile.save(createProfileDto);
+
+    if (newProfile) {
+      return newProfile;
+    };
+
+    return undefined;
+  };
 
   findAll() {
     return `This action returns all profiles`;

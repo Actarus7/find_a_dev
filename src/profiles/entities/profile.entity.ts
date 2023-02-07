@@ -18,15 +18,11 @@ export class Profile extends BaseEntity {
     presentation: Presentation;
 
     @ApiProperty()
-    @OneToOne(() => User)
-    user: User;
-
-    @ApiProperty()
     @OneToMany(() => Language, language => language.profile)
-    languages: Language [];
+    languages: Language[];
 
     @ApiProperty()
     @OneToMany(() => Competence, competence => competence.profile)
-    competences: Competence [];
+    competences: Competence[];
 
 };
