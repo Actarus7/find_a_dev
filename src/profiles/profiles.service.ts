@@ -1,20 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Profile } from './entities/profile.entity';
 
 @Injectable()
 export class ProfilesService {
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
+  async create(createProfileDto: CreateProfileDto | any) {
+    const newProfile = await Profile.save(createProfileDto);
 
-  findAll() {
-    return `This action returns all profiles`;
-  }
+    if (newProfile) {
+      return newProfile;
+    };
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
-  }
+    return undefined;
+  };
+
+  async findAll() {
+    const profiles = await Profile.find({
+      relations: {
+        presentation: true,
+        languages: true,
+        competences: true,
+        user: true
+      },
+      select: { user: { id: true } },
+    });
+
+    if (profiles) {
+      return profiles;
+    };
+
+    return undefined;
+  };
+
+  async findOne(id: number) {
+    const profile = await Profile.find({
+      relations: {
+        presentation: true,
+        languages: true,
+        competences: true,
+        user: true
+      },
+      select: { user: { id: true } },
+      where: { id }
+    });
+
+    if (profile) {
+      return profile;
+    };
+
+    return undefined;
+  };
 
   update(id: number, updateProfileDto: UpdateProfileDto) {
     return `This action updates a #${id} profile`;
