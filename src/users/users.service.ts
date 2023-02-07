@@ -8,7 +8,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto, hash: string) {
     const newUser = new User();
     newUser.email = createUserDto.email;
-    newUser.surname = createUserDto.surname;
+    newUser.firstname = createUserDto.firstname;
     newUser.lastname = createUserDto.lastname;
     newUser.pseudo = createUserDto.pseudo;
     newUser.password = hash;
