@@ -41,17 +41,17 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  adress_1: string;
+  address_1: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  adress_2: string;
+  address_2: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  adress_3: string;
+  address_3: string;
 
   @ApiProperty()
   @IsPostalCode('any')

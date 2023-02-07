@@ -16,9 +16,9 @@ export class UsersService {
     newUser.country = createUserDto.country;
     newUser.region = createUserDto.region;
     newUser.departement = createUserDto.departement;
-    newUser.adress_1 = createUserDto.adress_1;
-    newUser.adress_2 = createUserDto.adress_2;
-    newUser.adress_3 = createUserDto.adress_3;
+    newUser.address_1 = createUserDto.address_1;
+    newUser.address_2 = createUserDto.address_2;
+    newUser.address_3 = createUserDto.address_3;
     newUser.zipcode = createUserDto.zipcode;
 
     await newUser.save();
@@ -36,8 +36,23 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const newUser = await User.findOneBy({
+      id: id,
+    });
+    newUser.pseudo = updateUserDto.pseudo;
+    newUser.city = updateUserDto.city;
+    newUser.country = updateUserDto.country;
+    newUser.region = updateUserDto.region;
+    newUser.departement = updateUserDto.departement;
+    newUser.address_1 = updateUserDto.address_1;
+    newUser.address_2 = updateUserDto.address_2;
+    newUser.address_3 = updateUserDto.address_3;
+    newUser.zipcode = updateUserDto.zipcode;
+
+    await User.save(newUser);
+
+    return await User.findOneBy({ id: id });
   }
 
   remove(id: number) {
