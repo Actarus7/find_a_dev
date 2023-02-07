@@ -191,5 +191,28 @@ export class FriendshipsService {
     }) 
   }
 
+  /**
+   * Récupération des relations en attente d'un tiers
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @returns             Friendships {friend => user Not Allowed}
+   */
+  async findAllWaitForOther(userPseudo : string) {
+    return await Friendship.find({
+      relations : {
+        user : true , 
+        friend : true
+      },
+      where : {
+        friend : {pseudo : userPseudo} ,
+        allowed : false
+      },
+      select : {
+        allowed : true,
+        user : { pseudo : true} ,
+        friend : { pseudo : true} 
+      },
+    }) 
+  }
 
 }
