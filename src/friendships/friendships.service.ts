@@ -68,4 +68,25 @@ export class FriendshipsService {
       }))[0]  ;
   }
 
+  /**
+   * Permet de trouver les relations user => friend et friend => user
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @param friendPseudo  Pseudo de la cible
+   * @returns             [ {user => friend} , {friend => user} ]
+   */
+  async findBoth(userPseudo : string, friendPseudo  : string)  : Promise < Friendship[] | undefined >
+  {
+    const firth = await this.findOne( userPseudo, friendPseudo )
+    
+    if ( firth !== undefined )
+    {
+      return [
+        firth ,
+        await this.findOne( friendPseudo, userPseudo ),
+      ];
+    }
+    return undefined
+  }
+
 }
