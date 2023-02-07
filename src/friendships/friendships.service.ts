@@ -89,4 +89,44 @@ export class FriendshipsService {
     return undefined
   }
 
+  /**
+   * Permet d'obtenir le statut d'une relation en fonction des pseudos de 2 user
+   * 
+   * @param friendships 
+   * @returns le statut actuel du lien :
+   * * 0 : N'existe pas
+   * * 1 : En attente de votre part
+   * * 2 : En attente de la part de l'autre user
+   * * 3 : Le lien est partagé
+   */
+  async findStatusWithObject(friendships?  : Friendship[])  : Promise<{status : string,code:number}>
+  {
+    if (friendships === undefined)
+    {
+      return {
+        status : "not exist",
+        code : 0
+      }
+    }
+    const [allowed1,allowed2] = friendships.map(item => item.allowed)
+    if (!allowed1){
+      return {
+        status : "waiting for you",
+        code : 1
+      }
+    }
+    if (!allowed2){
+      return {
+        status : "waiting for the other",
+        code : 2
+      }
+    }
+    
+    return {
+      status : "allowed",
+      code : 3
+    }
+  }
+
+
 }
