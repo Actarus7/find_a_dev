@@ -1,8 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Bind, ParseIntPipe, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Bind,
+  ParseIntPipe,
+  BadRequestException,
+} from '@nestjs/common';
 import { PresentationsService } from './presentations.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+/**Décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
+@ApiTags('Presentations')
 /**Décorateur de contrôle qui récupère toutes les données de PresentationsService */
 @Controller('presentations')
 
@@ -32,11 +46,14 @@ export class PresentationsController {
   /**Contrôle préalable à la modification d'une présentation */
   @Patch(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  async update(@Param('id') id: number, @Body() updatePresentationDto: UpdatePresentationDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updatePresentationDto: UpdatePresentationDto,
+  ) {
     const isPresentationExists = await this.presentationsService.findOne(id);
-    if(!isPresentationExists){
+    if (!isPresentationExists) {
       throw new BadRequestException('Présentation non trouvée');
-    };
+    }
     return this.presentationsService.update(+id, updatePresentationDto);
   }
 
@@ -45,10 +62,10 @@ export class PresentationsController {
   @Bind(Param('id', new ParseIntPipe()))
   async remove(@Param('id') id: number) {
     const isPresentationExists = await this.presentationsService.findOne(id);
-    if (!isPresentationExists){
+    if (!isPresentationExists) {
       throw new BadRequestException('Présentation non trouvée');
-    };
+    }
     const deletedPresentation = await isPresentationExists.remove();
-    return deletedPresentation
+    return deletedPresentation;
   }
 }
