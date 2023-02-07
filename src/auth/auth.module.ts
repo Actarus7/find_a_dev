@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios/dist';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,6 +12,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot(),
     UsersModule,
     PassportModule,

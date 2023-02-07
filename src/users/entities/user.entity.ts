@@ -73,6 +73,12 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   zipcode: string;
 
+  @Column({ type: 'float' })
+  latitude: number;
+
+  @Column({ type: 'float' })
+  longitude: number;
+
   @OneToOne(() => Profile)
   profile: Profile;
 

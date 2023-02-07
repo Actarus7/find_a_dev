@@ -1,11 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { HttpException, Injectable } from '@nestjs/common';
+import { AxiosResponse } from 'axios';
+import { catchError, lastValueFrom, map, Observable } from 'rxjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly httpService: HttpService) {}
   async create(createUserDto: CreateUserDto, hash: string) {
+    const street = `${createUserDto.address_1} ${
+      createUserDto.address_2 || ''
+    } ${createUserDto.address_3 || ''}`
+      .split(' ')
+      .filter((item) => item != '')
+      .join('+');
+    const city = createUserDto.city.split(' ').join('+'); // 12 Av. Winston Churchill, 31100 Toulouse
+
+    const codepostal = createUserDto.zipcode;
+    const contry = createUserDto.country;
+
+    const responseA = this.httpService
+      .get(
+        `https://geocode.maps.co/search?q=${street}+${city}+${codepostal}+${contry}`,
+      )
+      .pipe(
+        map((responseB) => {
+          return { lat: responseB.data[0].lat, lon: responseB.data[0].lon };
+        }),
+        catchError((e) => {
+          throw new HttpException(e.response.data, e.response.status);
+        }),
+      );
+
+    const coord = await lastValueFrom(responseA);
+    console.log(coord.lat);
+
     const newUser = new User();
     newUser.email = createUserDto.email;
     newUser.firstname = createUserDto.firstname;
@@ -20,14 +51,12 @@ export class UsersService {
     newUser.address_2 = createUserDto.address_2;
     newUser.address_3 = createUserDto.address_3;
     newUser.zipcode = createUserDto.zipcode;
+    newUser.latitude = coord.lat;
+    newUser.longitude = coord.lon;
 
     await newUser.save();
 
     return newUser;
-  }
-
-  findAll() {
-    return `This action returns all users`;
   }
 
   async findOneByPseudo(pseudo: string) {
