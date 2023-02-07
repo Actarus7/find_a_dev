@@ -9,10 +9,10 @@ import { UpdateCompetenceDto } from './dto/update-competence.dto';
 
 /**Class permettant le contrôle des données entrantes pour les requête competences */
 export class CompetencesController {
-  
+
   constructor(private readonly competencesService: CompetencesService) {}
 
-  /**Controle prealable a l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
+  /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
     return this.competencesService.createCompetences(createCompetenceDto);
