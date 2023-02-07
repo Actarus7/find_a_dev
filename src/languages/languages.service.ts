@@ -5,6 +5,7 @@ import { Language } from './entities/language.entity';
 
 @Injectable()
 export class LanguagesService {
+
   async create(createLanguageDto: CreateLanguageDto | any) {
     const newLanguage = await Language.save(createLanguageDto);
 
@@ -15,19 +16,49 @@ export class LanguagesService {
     return undefined;
   };
 
+
   async findAll() {
-    return `This action returns all languages`;
+    const languages = await Language.find();
+
+    if (languages) {
+      return languages;
+    };
+
+    return languages;
+  };
+
+
+  async findOne(id: number) {
+    const language = await Language.findOneBy({id});
+
+    if (language) {
+      return language;
+    };
+
+    return language;
+  };
+
+
+  async update(id: number, updateLanguageDto: UpdateLanguageDto) {
+
+    const updateLanguage = await Language.update(+id, updateLanguageDto);
+
+    if (updateLanguage) {
+      return Language.findOneBy({id});
+    };
+    
+    return undefined;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} language`;
-  }
+  async remove(id: number) {
+    const deleteLanguage = await Language.findOneBy({id});
+    deleteLanguage.remove();
 
-  update(id: number, updateLanguageDto: UpdateLanguageDto) {
-    return `This action updates a #${id} language`;
-  }
+    if (deleteLanguage) {
+      return deleteLanguage
+    };
 
-  remove(id: number) {
-    return `This action removes a #${id} language`;
-  }
-}
+    return undefined;
+  };
+
+};
