@@ -15,12 +15,12 @@ import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-/**Décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
-@ApiTags('Presentations')
-/**Décorateur de contrôle qui récupère toutes les données de PresentationsService */
-@Controller('presentations')
 
 /**class permettant le contrôle des données entrantes pour les requêtes presentations */
+/*Décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
+@ApiTags('Presentations')
+/*Décorateur de contrôle qui récupère toutes les données de PresentationsService */
+@Controller('presentations')
 export class PresentationsController {
   constructor(private readonly presentationsService: PresentationsService) {}
 
