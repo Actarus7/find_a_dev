@@ -12,6 +12,9 @@ import { Friendship } from './entities/friendship.entity';
  * * **findStatusWithObject** : Permet d'obtenir le statut d'une relation en fonction des pseudos de 2 user
  * * **findStatusWithPseudo** : Permet d'obtenir le statut d'une relation en fonction des pseudos de 2 user
  * * **promote**              : Permet de valider l'état d'une relation
+ * * **findAllWaitForMe**     : Récupération des relations en attente du user
+ * * **findAllWaitForOther**  : Récupération des relations en attente d'un tiers
+ * * **findAllDone**          : Récupération des relations validées dans les 2 sens
  * * **remove**               : 
  */
 @Injectable()
@@ -40,6 +43,7 @@ export class FriendshipsService {
       }).save(),
     ]
   }
+
   /**
    * Permet de trouver la relation user => friend
    * 
@@ -145,7 +149,6 @@ export class FriendshipsService {
     return this.findStatusWithObject(friendships)
   }
 
-  
   /**
    * Permet de valider l'état d'une relation
    * 
@@ -164,20 +167,21 @@ export class FriendshipsService {
     return friendship ;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} friendship`;
-  }
-  
-/*
-  async findAll() {
+  /**
+   * Récupération des relations en attente du user
+   * 
+   * @param userPseudo    Pseudo du sujet
+   * @returns             Friendships {user => friend Not Allowed}
+   */
+  async findAllWaitForMe(userPseudo : string) {
     return await Friendship.find({
       relations : {
         user : true , 
         friend : true
       },
       where : {
-        user : {pseudo : "jo"} , 
-        friend : {pseudo : "jo2"}
+        user : {pseudo : userPseudo} ,
+        allowed : false
       },
       select : {
         allowed : true,
@@ -186,6 +190,6 @@ export class FriendshipsService {
       },
     }) 
   }
-*/
+
 
 }
