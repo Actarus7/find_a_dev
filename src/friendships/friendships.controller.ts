@@ -25,7 +25,7 @@ export class FriendshipsController {
    * * 3 : Le lien est partagé
    */
   @UseGuards(new JwtAuthGuard())
-  @Post('ask/:friendPseudo')
+  @Post(':friendPseudo')
   async create(@Param('friendPseudo') friendPseudo: string, @Request() req) {
     
     const userPseudo = req.user.pseudo
@@ -61,4 +61,27 @@ export class FriendshipsController {
 
   }
 
+  @Get('/:friendPseudo')
+  async findOne(@Param('friendPseudo') friendPseudo: string) {
+    const userPseudo = "jo"
+    return await this.friendshipsService.findOne(userPseudo,friendPseudo)
+  }
+/*
+  @Get()
+  async findall(@Param('friendPseudo') friendPseudo: string) {
+    return await this.friendshipsService.findAll()
+  }
+  */
+  /*
+
+  @Patch(':id')
+  update(@Param('id') id: string) {
+    return this.friendshipsService.update(+id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.friendshipsService.remove(+id);
+  }
+  */
 }
