@@ -27,21 +27,41 @@ export class PresentationsController {
   /**Contrôle préalable à l'ajout d'une nouvelle présentation, tout en applicant les obligations de CreateCompetenceDto*/
   @Post()
   create(@Body() createPresentationDto: CreatePresentationDto) {
-    return this.presentationsService.create(createPresentationDto);
+    const createdPresentation = this.presentationsService.create(createPresentationDto);
+    return {
+      statusCode: 201,
+      message: "Création d'une présentation réussie",
+      data: createdPresentation
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération de toutes les présentations */
   @Get()
   findAll() {
-    return this.presentationsService.findAll();
+    const allPresentation = this.presentationsService.findAll();
+    return {
+      statusCode: 200,
+      message: "Récupération réussie de toutes les présentations",
+      data: allPresentation
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   findOne(@Param('id') id: string) {
-    return this.presentationsService.findOne(+id);
+    const onePresentation = this.presentationsService.findOne(+id);
+    return {
+      statusCode: 200,
+      message: "Récupération réussie d'une présentation"
+    }
   }
+
+
 
   /**Contrôle préalable à la modification d'une présentation */
   @Patch(':id')
@@ -54,8 +74,15 @@ export class PresentationsController {
     if (!isPresentationExists) {
       throw new BadRequestException('Présentation non trouvée');
     }
-    return this.presentationsService.update(+id, updatePresentationDto);
+    const updatedPresentation = this.presentationsService.update(+id, updatePresentationDto);
+    return {
+      statusCode: 201,
+      message: 'Modifications de la présentation enregistrées',
+      data: updatedPresentation
+    }
   }
+
+
 
   /**Contrôle préalable à la suppression d'une compétence */
   @Delete(':id')
@@ -66,6 +93,10 @@ export class PresentationsController {
       throw new BadRequestException('Présentation non trouvée');
     }
     const deletedPresentation = await isPresentationExists.remove();
-    return deletedPresentation;
+    return{
+      statusCode: 201,
+      message: 'Suppression de la présentation enregistrées',
+      data:  deletedPresentation
+    };
   }
 }

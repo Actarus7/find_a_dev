@@ -26,24 +26,47 @@ import { UpdateCompetenceDto } from './dto/update-competence.dto';
 export class CompetencesController {
   constructor(private readonly competencesService: CompetencesService) {}
 
+
+
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @Post()
   create(@Body() createCompetenceDto: CreateCompetenceDto) {
-    return this.competencesService.createCompetences(createCompetenceDto);
+    const createdCompetences = this.competencesService.createCompetences(createCompetenceDto);
+    return {
+      statusCode: 201,
+      message: "Création d'une compétence réussie",
+      data: createdCompetences
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
   findAll() {
-    return this.competencesService.findAll();
+    const allCompetences = this.competencesService.findAll();
+    return {
+      statusCode: 200,
+      message: "Récupération de toutes les compétences réussie",
+      data: allCompetences
+    }
   }
+
+
 
   /**Contrôle préalable à la récupération d'une compétence grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   findOne(@Param('id') id: string) {
-    return this.competencesService.findOne(+id);
+    const oneCompetence = this.competencesService.findOne(+id);
+    return {
+      statusCode: 200,
+      message: "Récupération d'une compétence réussie",
+      data: oneCompetence
+    }
   }
+
+
 
   /**Contrôle préalable à la modification d'une compétence */
   @Patch(':id')
@@ -57,8 +80,12 @@ export class CompetencesController {
     if (!isCompetenceExists) {
       throw new BadRequestException('Compétence non trouvée');
     }
-
-    return await this.competencesService.update(+id, updateCompetenceDto);
+    const updatedCompetences = await this.competencesService.update(+id, updateCompetenceDto);
+    return {
+      statusCode: 201,
+      message: 'Modifications de la présentation enregistrées',
+      data: updatedCompetences
+    }
   }
 
   /**Contrôle préalable à la suppression d'une compétence */
@@ -72,6 +99,10 @@ export class CompetencesController {
     }
     const deletedCompetence = await isCompetenceExists.remove();
 
-    return deletedCompetence;
+    return {
+      statusCode: 201,
+      message: 'Suppression de la compétence enregistrées',
+      data:  deletedCompetence
+    };
   }
 }
