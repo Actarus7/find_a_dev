@@ -77,14 +77,14 @@ export class ProfilesController {
 
 
     // Vérifie que competences[] n'est pas un array vide
-    if (createProfileDto.languages.length < 1) {
+    if (createProfileDto.competences.length < 1) {
       throw new BadRequestException('Compétences est vide');
     };
 
     // Vérifie que le type de données attendu dans compétences est correct
     createProfileDto.competences.forEach(elm => {
-      if (typeof (elm) != 'number') {
-        throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'number'");
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'string'");
       };
     });
 
