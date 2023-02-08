@@ -54,7 +54,7 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   async update(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     const userLogged = req.user.id;
-    //requête la modification de l'adresse/peudo
+    //requête la modification de l'adresse/pseudo
     const userUpdate = await this.usersService.update(
       userLogged,
       updateUserDto,
