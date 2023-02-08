@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -63,5 +65,33 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async searchUser(getUserDto: GetUserDto) {
+    console.log(getUserDto);
+
+    const user = await User.find({
+      select: { pseudo: true },
+      //relations: { profile: { competences: true, languages: true } },
+      /* where: [
+        {
+          pseudo: Like(`%${getUserDto.pseudo}%`),
+        },
+        { country: Like(`%${getUserDto.country}%`) },
+        { region: Like(`%${getUserDto.region}%`) },
+        { departement: Like(`%${getUserDto.departement}%`) },
+        { city: Like(`%${getUserDto.city}%`) }, */
+
+      /* { profile: { id: getUserDto.profileId } },
+        {
+          profile: {
+            competences: { description: Like(`%${getUserDto.competences}%`) },
+          },
+        }, */
+      //{ profile: { id: getUserDto.profileId } },
+      //],
+    });
+
+    return user;
   }
 }

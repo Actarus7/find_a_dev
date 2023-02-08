@@ -12,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { GetUserDto } from '../dto/get-user.dto';
 
 @Entity('users')
 @Unique(['email', 'pseudo'])
@@ -74,6 +75,7 @@ export class User extends BaseEntity {
   zipcode: string;
 
   @OneToOne(() => Profile)
+  @JoinColumn()
   profile: Profile;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)

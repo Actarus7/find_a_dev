@@ -8,6 +8,7 @@ import {
   Patch,
   Request,
   ConflictException,
+  Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { GetUserDto } from './dto/get-user.dto';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Users')
@@ -85,5 +87,13 @@ export class UsersController {
         userUpdate,
       },
     };
+  }
+
+  @Get()
+  //@UseInterceptors(ClassSerializerInterceptor)
+  async search(@Body() getUserDto: GetUserDto) {
+    const user = await this.usersService.searchUser(getUserDto);
+
+    return user;
   }
 }

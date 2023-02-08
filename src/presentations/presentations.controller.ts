@@ -10,8 +10,6 @@ import {
   ParseIntPipe,
   BadRequestException,
   UseGuards,
-  ConflictException,
-  Request,
 } from '@nestjs/common';
 import { PresentationsService } from './presentations.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
@@ -86,7 +84,6 @@ export class PresentationsController {
       throw new BadRequestException('Présentation non trouvée');
     }
     const updatedPresentation = await this.presentationsService.update(+id, updatePresentationDto);
-    console.log(updatedPresentation);
     
     return {
       statusCode: 201,
