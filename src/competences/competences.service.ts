@@ -19,7 +19,6 @@ export class CompetencesService
   /**créer une compétence dans la BDD */
   async createCompetences(createCompetenceDto: CreateCompetenceDto | any) : Promise<Competence>
   {
-    console.log(createCompetenceDto);
     
     const newCompetence = await Competence.save(createCompetenceDto);
     return newCompetence;

@@ -32,9 +32,7 @@ export class CompetencesController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createCompetenceDto: CreateCompetenceDto) {
-    
-    createCompetenceDto.description = createCompetenceDto.description.toLowerCase()
-    console.log(createCompetenceDto); 
+
     // Verification des Doublons
     const description = createCompetenceDto.description
     const isCompetencesExists = await this.competencesService.findOneByDescription(description)
@@ -94,7 +92,6 @@ export class CompetencesController {
     @Param('id') id: number,
     @Body() updateCompetenceDto: CreateCompetenceDto,
   ) {
-    updateCompetenceDto.description = updateCompetenceDto.description.toLowerCase()
     const isCompetenceExists = await this.competencesService.findOne(id);
 
     if (!isCompetenceExists) {
