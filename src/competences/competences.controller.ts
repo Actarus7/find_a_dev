@@ -11,8 +11,9 @@ import {
   BadRequestException,
   ParseIntPipe,
 } from '@nestjs/common';
-import { Bind } from '@nestjs/common/decorators';
+import { Bind, UseGuards } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CompetencesService } from './competences.service';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
@@ -29,9 +30,11 @@ export class CompetencesController {
 
 
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createCompetenceDto: CreateCompetenceDto) {
-    const createdCompetences = this.competencesService.createCompetences(createCompetenceDto);
+  async create(@Body() createCompetenceDto: CreateCompetenceDto) {
+    // Verification des Doublons
+    const createdCompetences = await this.competencesService.createCompetences(createCompetenceDto);
     return {
       statusCode: 201,
       message: "Création d'une compétence réussie",

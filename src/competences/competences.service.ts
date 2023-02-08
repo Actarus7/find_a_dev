@@ -18,9 +18,9 @@ export class CompetencesService
 {
 
   /**créer une compétence dans la BDD */
-  createCompetences(createCompetenceDto: CreateCompetenceDto | any)
+  async createCompetences(createCompetenceDto: CreateCompetenceDto | any) : Promise<Competence>
   {
-    const newCompetence = Competence.save(createCompetenceDto);
+    const newCompetence = await Competence.save(createCompetenceDto);
     return newCompetence;
   }
 
