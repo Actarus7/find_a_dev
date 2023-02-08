@@ -60,7 +60,7 @@ export class LanguagesController {
   @Bind(Param('id', new ParseIntPipe()))
   async update(
     @Param('id') id: number,
-    @Body() updateLanguageDto: UpdateLanguageDto,
+    @Body() updateLanguageDto: CreateLanguageDto,
   ) {
 
 

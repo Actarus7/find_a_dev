@@ -18,27 +18,27 @@ export class CompetencesService
 {
 
   /**créer une compétence dans la BDD */
-  createCompetences(createCompetenceDto: CreateCompetenceDto | any)
+  async createCompetences(createCompetenceDto: CreateCompetenceDto | any) : Promise<Competence>
   {
-    const newCompetence = Competence.save(createCompetenceDto);
+    const newCompetence = await Competence.save(createCompetenceDto);
     return newCompetence;
   }
 
   /**récupérer toutes les compétences de la BDD */
-  findAll()
+  async findAll()
   {
-    return Competence.find();
+    return await Competence.find();
   }
 
   /**récupérer une compétence de la BDD par son id  */
-  findOne(id: number)
+  async findOne(id: number) : Promise<Competence>
   {
-    return Competence.findOneBy({ id })
+    return await Competence.findOneBy({ id })
   }
 
 
   /**modifier une compétence de la BDD par son id */
-  async update(id: number, updateCompetenceDto: UpdateCompetenceDto | any)
+  async update(id: number, updateCompetenceDto: UpdateCompetenceDto | any) : Promise<Competence>
   {
 
     const newCompetence = await Competence.update(id, updateCompetenceDto);
