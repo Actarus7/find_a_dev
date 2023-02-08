@@ -7,6 +7,7 @@ import {
   UseGuards,
   Patch,
   Request,
+  ConflictException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -30,6 +31,23 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   async create(@Body() createUserDto: CreateUserDto) {
     const saltOrRounds = 10;
+
+    const isPseudoExist = await this.usersService.findOneByPseudo(
+      createUserDto.pseudo,
+    );
+    if (isPseudoExist)
+      throw new ConflictException(
+        'Pseudo déjà utilisé, veuillez changer de pseudo',
+      );
+
+    const isEmailExist = await this.usersService.findOneByEmail(
+      createUserDto.email,
+    );
+    if (isEmailExist)
+      throw new ConflictException(
+        'E-mail déjà utilisé, veuillez entrer un e-mail valide',
+      );
+
     // Hashage du password
     const hash = await bcrypt.hash(createUserDto.password, saltOrRounds);
     // Création du user
@@ -54,7 +72,7 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   async update(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     const userLogged = req.user.id;
-    //requête la modification de l'adresse/peudo
+    //requête la modification de l'adresse/pseudo
     const userUpdate = await this.usersService.update(
       userLogged,
       updateUserDto,
