@@ -45,7 +45,6 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération de toutes les présentations */
-  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
 
@@ -61,7 +60,6 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async findOne(@Param('id') id: string) {
