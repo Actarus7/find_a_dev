@@ -8,7 +8,6 @@ import { HttpExceptionFilter } from './errors/AllExceptionsFilter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/');
-  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
