@@ -8,6 +8,8 @@ export class LanguagesService {
 
   /** Création d'un nouveau langage */
   async create(createLanguageDto: CreateLanguageDto | any) {
+    console.log(createLanguageDto);
+
     const newLanguage = await Language.save(createLanguageDto);
 
     if (newLanguage) {
@@ -32,7 +34,7 @@ export class LanguagesService {
 
   /** Récupération d'un langage par son id (avec les relations) */
   async findOne(id: number) {
-    const language = await Language.findOneBy({id});
+    const language = await Language.findOneBy({ id });
 
     if (language) {
       return language;
@@ -44,7 +46,7 @@ export class LanguagesService {
 
   /** Récupération d'un langage par son name (avec les relations) */
   async findOneByName(name: string) {
-    const language = await Language.findOneBy({name});
+    const language = await Language.findOneBy({ name });
 
     if (language) {
       return language;
@@ -58,15 +60,15 @@ export class LanguagesService {
     const updateLanguage = await Language.update(+id, updateLanguageDto);
 
     if (updateLanguage) {
-      return Language.findOneBy({id});
+      return Language.findOneBy({ id });
     };
-    
+
     return undefined;
   };
 
 
   async remove(id: number) {
-    const deleteLanguage = await Language.findOneBy({id});
+    const deleteLanguage = await Language.findOneBy({ id });
     deleteLanguage.remove();
 
     if (deleteLanguage) {

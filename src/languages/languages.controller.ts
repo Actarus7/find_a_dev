@@ -16,7 +16,6 @@ import {
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
-import { UpdateLanguageDto } from './dto/update-language.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -108,9 +107,9 @@ export class LanguagesController {
 
 
     // Vérifie que le langage modifié n'existe pas déjà
-    const isLanguageExistsByName = await this.languagesService.findOneByName(updateLanguageDto.name);
+    const isNewLanguageExistsByName = await this.languagesService.findOneByName(updateLanguageDto.name);
 
-    if (isLanguageExistsByName) {
+    if (isNewLanguageExistsByName) {
       throw new ConflictException('Ce langage existe déjà');
     };
 
