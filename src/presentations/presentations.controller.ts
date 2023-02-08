@@ -26,7 +26,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 /*Décorateur de contrôle qui récupère toutes les données de PresentationsService */
 @Controller('presentations')
 export class PresentationsController {
-  constructor(private readonly presentationsService: PresentationsService) {}
+  constructor(private readonly presentationsService: PresentationsService) { }
 
   /**Contrôle préalable à l'ajout d'une nouvelle présentation, tout en applicant les obligations de CreateCompetenceDto*/
   @UseGuards(JwtAuthGuard)
@@ -109,10 +109,10 @@ export class PresentationsController {
       throw new BadRequestException('Présentation non trouvée');
     }
     const deletedPresentation = await isPresentationExists.remove();
-    return{
+    return {
       statusCode: 201,
       message: 'Suppression de la présentation enregistrées',
-      data:  deletedPresentation
+      data: deletedPresentation
     };
   }
 }

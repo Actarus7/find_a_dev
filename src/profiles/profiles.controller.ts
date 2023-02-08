@@ -21,6 +21,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { LanguagesService } from 'src/languages/languages.service';
 import { CompetencesService } from 'src/competences/competences.service';
+import { PresentationsService } from 'src/presentations/presentations.service';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Profiles')
@@ -29,7 +30,8 @@ export class ProfilesController {
   constructor(
     private readonly profilesService: ProfilesService,
     private readonly languageService: LanguagesService,
-    private readonly competencesService: CompetencesService) { }
+    private readonly competencesService: CompetencesService,
+    private readonly presentationsService: PresentationsService) { }
 
 
   /** Création d'un nouveau profil   
@@ -42,7 +44,58 @@ export class ProfilesController {
    */
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createProfileDto: CreateProfileDto, @Request() req) {
+  async create(@Body() createProfileDto: CreateProfileDto | any, @Request() req) {
+
+
+    // Vérifie que la présentation existe
+    const isPresentationExists = await this.presentationsService.findOne(createProfileDto.presentation);
+
+    if (!isPresentationExists) {
+      throw new BadRequestException("Cette présentation n'existe pas");
+    };
+
+
+    // Vérifie que languages[] n'est pas un array vide
+    if (createProfileDto.languages.length < 1) {
+      throw new BadRequestException('Languages est vide');
+    };
+
+    // Vérifie que le type de données attendu dans langages est correct
+    createProfileDto.languages.forEach(elm => {
+      if (typeof (elm) != 'number') {
+        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'number'");
+      };
+    });
+
+    // Modification du format d'envoi de langages
+    let languages = []
+    createProfileDto.languages.forEach(elm => {
+      languages.push({id: elm})
+    });
+    createProfileDto.languages = languages
+
+
+
+    // Vérifie que competences[] n'est pas un array vide
+    if (createProfileDto.languages.length < 1) {
+      throw new BadRequestException('Compétences est vide');
+    };
+
+    // Vérifie que le type de données attendu dans compétences est correct
+    createProfileDto.competences.forEach(elm => {
+      if (typeof (elm) != 'number') {
+        throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'number'");
+      };
+    });
+
+    // Modification du format d'envoi de competences
+    let competences = []
+    createProfileDto.competences.forEach(elm => {
+      competences.push({id: elm})
+    });
+    createProfileDto.competences = competences
+
+    
 
 
     // Récupère l'id du user connecté puis vérifie qu'il n'a pas déjà un profil existant
@@ -69,7 +122,8 @@ export class ProfilesController {
 
     createProfileDto.languages.forEach(language => {
       if (!arrayAllLanguages.includes(language.id)) {
-        throw new BadRequestException("Un des langages que vous essayez d'ajouter n'existe pas");
+        // Création du langage inexistant
+        throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
       };
     });
 

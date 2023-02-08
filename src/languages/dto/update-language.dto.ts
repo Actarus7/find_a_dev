@@ -7,4 +7,5 @@ export class UpdateLanguageDto extends PartialType(CreateLanguageDto) {
   @IsString()
   @IsNotEmpty()
   name: string;
-}
+
+};

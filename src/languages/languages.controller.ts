@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   BadRequestException,
   UseGuards,
+  ConflictException,
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
@@ -65,16 +66,31 @@ export class LanguagesController {
 
 
     // Vérifie si le langage à modifier existe
-    const isLanguageExists = await this.languagesService.findOne(id);
+    const isLanguageExistsById = await this.languagesService.findOne(id);
 
-    if (!isLanguageExists) {
+    if (!isLanguageExistsById) {
       throw new BadRequestException('Language id unknown');
-    }
+    };
+
+
+    // Vérifie que le langage modifié n'existe pas déjà
+    const isLanguageExistsByName = await this.languagesService.findOneByName(updateLanguageDto.name);
+
+    if (isLanguageExistsById) {
+      throw new ConflictException('Ce langage existe déjà');
+    };
+
 
     // Modifie le langage concerné
-    return this.languagesService.update(+id, updateLanguageDto);
+    const updateLanguage = this.languagesService.update(+id, updateLanguageDto);
+    return {
+      statusCode: 201,
+      message: 'Modifications enregistrées',
+      data: {
+        updateLanguage,
+      },
+    };
   };
-
 
   /** Supprimer un langage */
   @UseGuards(JwtAuthGuard)

@@ -24,7 +24,6 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { pseudo: user.pseudo, sub: user.id };
-    console.log(payload);
 
     return {
       statusCode: 200,
