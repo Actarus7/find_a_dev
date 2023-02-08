@@ -1,5 +1,12 @@
-import { Controller, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  BadRequestException,
+} from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './auth-login.dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -8,7 +15,10 @@ import { LocalAuthGuard } from './local-auth.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
   /**
    * Login permettant la création d'un token pour l'user se connectant.
    * @param req
