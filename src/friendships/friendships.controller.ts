@@ -90,7 +90,7 @@ export class FriendshipsController {
    * * 2 : En attente de la part de l'autre user
    * * 3 : Le lien est partagé
    */
-  @UseGuards(new JwtAuthGuard())
+  @UseGuards(JwtAuthGuard)
   @Get(':friendPseudo')
   async findOne(@Param('friendPseudo') friendPseudo: string, @Request() req) {
     const userPseudo = req.user.pseudo;
@@ -123,7 +123,7 @@ export class FriendshipsController {
    * * En attente d'un autre
    * * Validées
    */
-  @UseGuards(new JwtAuthGuard())
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findall(@Request() req) {
     const userPseudo = req.user.pseudo;
@@ -145,7 +145,7 @@ export class FriendshipsController {
    * @param req           La requete contenant le token
    * @returns             { delete : true }
    */
-  @UseGuards(new JwtAuthGuard())
+  @UseGuards(JwtAuthGuard)
   @Delete(':friendPseudo')
   async remove(@Param('friendPseudo') friendPseudo: string, @Request() req) {
     const userPseudo = req.user.pseudo;

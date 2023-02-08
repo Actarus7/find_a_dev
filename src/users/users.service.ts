@@ -36,6 +36,12 @@ export class UsersService {
     return user;
   }
 
+  async findOneByEmail(email: string) {
+    const userMail = await User.findOne({ where: { email: email } });
+
+    return userMail;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const newUser = await User.findOneBy({
       id: id,
