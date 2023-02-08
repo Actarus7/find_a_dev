@@ -31,16 +31,9 @@ export class PresentationsController {
   /**Contrôle préalable à l'ajout d'une nouvelle présentation, tout en applicant les obligations de CreateCompetenceDto*/
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() description: string, @Request() req) {
+  async create(@Body() createPresentationDto: CreatePresentationDto) {
 
-    // vérification des doublons
-    const isPresentationExists = req.presentation.description
-
-      if (isPresentationExists === description){
-
-        throw new ConflictException('La présentation existe déjà')
-      }
-    const createdPresentation = await this.presentationsService.create(description);
+    const createdPresentation = await this.presentationsService.create(createPresentationDto);
 
     return {
       statusCode: 201,
@@ -94,7 +87,9 @@ export class PresentationsController {
     if (!isPresentationExists) {
       throw new BadRequestException('Présentation non trouvée');
     }
-    const updatedPresentation = this.presentationsService.update(+id, updatePresentationDto);
+    const updatedPresentation = await this.presentationsService.update(+id, updatePresentationDto);
+    console.log(updatedPresentation);
+    
     return {
       statusCode: 201,
       message: 'Modifications de la présentation enregistrées',

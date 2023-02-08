@@ -35,17 +35,19 @@ export class CompetencesController {
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() description: string, @Request() req) {
+  async create(@Body() createCompetenceDto: CreateCompetenceDto) {
 
+    console.log(createCompetenceDto); 
     // Verification des Doublons
-    const isCompetencesExists = req.competences.description
+    const isCompetencesExists = createCompetenceDto.description
+    
 
-      if(isCompetencesExists === description) {
+      if(isCompetencesExists === 'description') {
 
         throw new ConflictException('La compétence existe déjà')
       }
 
-    const createdCompetences = await this.competencesService.createCompetences(description);
+    const createdCompetences = await this.competencesService.createCompetences(createCompetenceDto);
 
     return {
       statusCode: 201,

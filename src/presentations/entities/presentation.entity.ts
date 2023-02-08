@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 
 @Entity('presentations')
-@Unique(['description'])
 export class Presentation extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
