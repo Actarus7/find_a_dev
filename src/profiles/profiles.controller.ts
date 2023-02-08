@@ -62,15 +62,15 @@ export class ProfilesController {
 
     // Vérifie que le type de données attendu dans langages est correct
     createProfileDto.languages.forEach(elm => {
-      if (typeof (elm) != 'number') {
-        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'number'");
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
       };
     });
 
     // Modification du format d'envoi de langages
     let languages = []
     createProfileDto.languages.forEach(elm => {
-      languages.push({id: elm})
+      languages.push({name: elm})
     });
     createProfileDto.languages = languages
 
@@ -116,14 +116,18 @@ export class ProfilesController {
     };
 
 
-    // Vérifie que les langages à ajouter existent
+    // Vérifie que les langages à ajouter existent et les crée si besoin
     const allLanguages = await this.languageService.findAll();
-    const arrayAllLanguages = allLanguages.map((elm) => elm.id);
+    const arrayAllLanguages = allLanguages.map((elm) => elm.name);
 
-    createProfileDto.languages.forEach(language => {
-      if (!arrayAllLanguages.includes(language.id)) {
+    createProfileDto.languages.forEach(async language => {
+      if (!arrayAllLanguages.includes(language.name)) {
         // Création du langage inexistant
-        throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
+        const newLanguage = await this.languageService.create(language.name);
+        console.log(newLanguage);
+        return
+        
+        // throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
       };
     });
 

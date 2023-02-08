@@ -12,6 +12,7 @@ import {
   BadRequestException,
   UseGuards,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
@@ -30,18 +31,44 @@ export class LanguagesController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createLanguageDto: CreateLanguageDto) {
+
+
+    // Vérifie que le langage à créer n'existe pas déjà
+    const isLanguageExists = await this.languagesService.findOneByName(createLanguageDto.name);
+
+    if (isLanguageExists) {
+      throw new ConflictException('Ce langage existe déjà');
+    };
+
+
+    // Création du nouveau langage
     const newLanguage = await this.languagesService.create(createLanguageDto);
 
-    return newLanguage;
+    return {
+      statusCode: 201,
+      message: "Création d'un nouveau langage réussie",
+      data: newLanguage
+    };
   };
 
 
   /** Récupération de tous les langages */
   @Get()
   async findAll() {
+
+    // Vérifie qu'il y a des langages à afficher
     const languages = await this.languagesService.findAll();
 
-    return languages;
+    if (languages.length < 1) {
+      throw new NotFoundException('Aucun langage à afficher');
+    };
+
+    // Retourne tous les langages
+    return {
+      statusCode: 200,
+      message: "Affichage de tous les langages",
+      data: languages
+    };
   };
 
 
@@ -49,9 +76,19 @@ export class LanguagesController {
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async findOne(@Param('id') id: number) {
+
+    // Vérifie que le langage sélectionné existe
     const language = await this.languagesService.findOne(+id);
 
-    return language;
+    if (!language) {
+      throw new NotFoundException("Ce langage n'existe pas");
+    };
+
+    return {
+      statusCode: 200,
+      message: "Affichage du langage sélectionné",
+      data: language
+    };
   };
 
 
@@ -82,21 +119,22 @@ export class LanguagesController {
 
 
     // Modifie le langage concerné
-    const updateLanguage = this.languagesService.update(+id, updateLanguageDto);
+    const updatedLanguage = this.languagesService.update(+id, updateLanguageDto);
     return {
       statusCode: 201,
       message: 'Modifications enregistrées',
-      data: {
-        updateLanguage,
-      },
+      data: updatedLanguage
     };
   };
 
+  
   /** Supprimer un langage */
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async remove(@Param('id') id: number) {
+
+    // Vérifie que le langage à supprimer existe
     const isLanguageExists = await this.languagesService.findOne(id);
 
     if (!isLanguageExists) {
@@ -104,7 +142,13 @@ export class LanguagesController {
     }
 
     // Supprime le langage concerné
-    return this.languagesService.remove(+id);
+    const deletedLanguage = this.languagesService.remove(+id);
+
+    return {
+      statusCode: 201,
+      message: 'Suppression du langage sélectionné',
+      data: deletedLanguage,
+    };
   };
 
 };

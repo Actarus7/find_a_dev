@@ -14,7 +14,7 @@ export class CreateProfileDto {
   @IsArray()
   languages: Language[];
 
-  @IsNumber({}, { each: true }) // ne marche plus car Array d'Objets Competence
+  // @IsNumber({}, { each: true }) // ne marche plus car Array d'Objets Competence
   @ApiProperty()
   @IsArray()
   competences: Competence[];
