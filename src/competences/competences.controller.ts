@@ -6,22 +6,16 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
   BadRequestException,
   ParseIntPipe,
-  Request,
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
 import { Bind, UseGuards } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { Not } from 'typeorm';
 import { CompetencesService } from './competences.service';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
-import { UpdateCompetenceDto } from './dto/update-competence.dto';
-import { Competence } from './entities/competence.entity';
 
 /**Class permettant le contrôle des données entrantes pour les requête competences */
 //décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger
@@ -87,13 +81,23 @@ export class CompetencesController {
   @Bind(Param('id', new ParseIntPipe()))
   async update(
     @Param('id') id: number,
-    @Body() updateCompetenceDto: UpdateCompetenceDto,
+    @Body() updateCompetenceDto: CreateCompetenceDto,
   ) {
     const isCompetenceExists = await this.competencesService.findOne(id);
 
     if (!isCompetenceExists) {
       throw new BadRequestException('Compétence non trouvée');
     }
+
+    const isCompetencesExists =
+      await this.competencesService.findOneByDescription(
+        updateCompetenceDto.description,
+      );
+
+    if (isCompetencesExists) {
+      throw new ConflictException('La compétence existe déjà');
+    }
+
     const updatedCompetences = await this.competencesService.update(
       +id,
       updateCompetenceDto,

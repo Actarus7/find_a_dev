@@ -10,8 +10,6 @@ import {
   ParseIntPipe,
   BadRequestException,
   UseGuards,
-  ConflictException,
-  Request,
 } from '@nestjs/common';
 import { PresentationsService } from './presentations.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
@@ -45,7 +43,6 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération de toutes les présentations */
-  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
 
@@ -61,7 +58,6 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async findOne(@Param('id') id: string) {
@@ -88,7 +84,6 @@ export class PresentationsController {
       throw new BadRequestException('Présentation non trouvée');
     }
     const updatedPresentation = await this.presentationsService.update(+id, updatePresentationDto);
-    console.log(updatedPresentation);
     
     return {
       statusCode: 201,

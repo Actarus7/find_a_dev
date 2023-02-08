@@ -55,6 +55,7 @@ export class ProfilesController {
     };
 
 
+
     // Vérifie que languages[] n'est pas un array vide
     if (createProfileDto.languages.length < 1) {
       throw new BadRequestException('Languages est vide');
@@ -62,40 +63,40 @@ export class ProfilesController {
 
     // Vérifie que le type de données attendu dans langages est correct
     createProfileDto.languages.forEach(elm => {
-      if (typeof (elm) != 'number') {
-        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'number'");
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
       };
     });
 
     // Modification du format d'envoi de langages
     let languages = []
     createProfileDto.languages.forEach(elm => {
-      languages.push({id: elm})
+      languages.push({ name: elm })
     });
     createProfileDto.languages = languages
 
 
 
     // Vérifie que competences[] n'est pas un array vide
-    if (createProfileDto.languages.length < 1) {
+    if (createProfileDto.competences.length < 1) {
       throw new BadRequestException('Compétences est vide');
     };
 
     // Vérifie que le type de données attendu dans compétences est correct
     createProfileDto.competences.forEach(elm => {
-      if (typeof (elm) != 'number') {
-        throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'number'");
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'string'");
       };
     });
 
     // Modification du format d'envoi de competences
     let competences = []
     createProfileDto.competences.forEach(elm => {
-      competences.push({id: elm})
+      competences.push({ id: elm })
     });
     createProfileDto.competences = competences
 
-    
+
 
 
     // Récupère l'id du user connecté puis vérifie qu'il n'a pas déjà un profil existant
@@ -108,6 +109,7 @@ export class ProfilesController {
     };
 
 
+
     // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
     const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
 
@@ -116,16 +118,22 @@ export class ProfilesController {
     };
 
 
-    // Vérifie que les langages à ajouter existent
-    const allLanguages = await this.languageService.findAll();
-    const arrayAllLanguages = allLanguages.map((elm) => elm.id);
 
-    createProfileDto.languages.forEach(language => {
-      if (!arrayAllLanguages.includes(language.id)) {
+    // Vérifie que les langages à ajouter existent et les crée si besoin
+    const allLanguages = await this.languageService.findAll();
+    const arrayAllLanguages = allLanguages.map((elm) => elm.name);
+
+    createProfileDto.languages.forEach(async language => {
+      if (!arrayAllLanguages.includes(language.name)) {
         // Création du langage inexistant
-        throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
+        const newLanguage = await this.languageService.create(language.name);
+        console.log(newLanguage);
+        return
+
+        // throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
       };
     });
+
 
 
     // Vérifie que les compétences à ajouter existent
@@ -137,6 +145,7 @@ export class ProfilesController {
         throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
       };
     });
+
 
 
     // Création du nouveau profil

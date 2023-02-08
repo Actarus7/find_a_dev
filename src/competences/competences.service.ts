@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
-import { UpdateCompetenceDto } from './dto/update-competence.dto';
 import { Competence } from './entities/competence.entity';
 
 /**
@@ -20,6 +19,7 @@ export class CompetencesService
   /**créer une compétence dans la BDD */
   async createCompetences(createCompetenceDto: CreateCompetenceDto | any) : Promise<Competence>
   {
+    
     const newCompetence = await Competence.save(createCompetenceDto);
     return newCompetence;
   }
@@ -45,7 +45,7 @@ export class CompetencesService
 
 
   /**modifier une compétence de la BDD par son id */
-  async update(id: number, updateCompetenceDto: UpdateCompetenceDto | any) : Promise<Competence>
+  async update(id: number, updateCompetenceDto: CreateCompetenceDto) : Promise<Competence>
   {
 
     const newCompetence = await Competence.update(id, updateCompetenceDto);
