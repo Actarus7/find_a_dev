@@ -55,6 +55,7 @@ export class ProfilesController {
     };
 
 
+
     // Vérifie que languages[] n'est pas un array vide
     if (createProfileDto.languages.length < 1) {
       throw new BadRequestException('Languages est vide');
@@ -70,7 +71,7 @@ export class ProfilesController {
     // Modification du format d'envoi de langages
     let languages = []
     createProfileDto.languages.forEach(elm => {
-      languages.push({name: elm})
+      languages.push({ name: elm })
     });
     createProfileDto.languages = languages
 
@@ -91,11 +92,11 @@ export class ProfilesController {
     // Modification du format d'envoi de competences
     let competences = []
     createProfileDto.competences.forEach(elm => {
-      competences.push({id: elm})
+      competences.push({ id: elm })
     });
     createProfileDto.competences = competences
 
-    
+
 
 
     // Récupère l'id du user connecté puis vérifie qu'il n'a pas déjà un profil existant
@@ -108,12 +109,14 @@ export class ProfilesController {
     };
 
 
+
     // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
     const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
 
     if (isPresentationProfileAlreadyExists.length > 0) {
       throw new ConflictException('Cette présentation est déjà affectée à un autre profil');
     };
+
 
 
     // Vérifie que les langages à ajouter existent et les crée si besoin
@@ -126,10 +129,11 @@ export class ProfilesController {
         const newLanguage = await this.languageService.create(language.name);
         console.log(newLanguage);
         return
-        
+
         // throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
       };
     });
+
 
 
     // Vérifie que les compétences à ajouter existent
@@ -141,6 +145,7 @@ export class ProfilesController {
         throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
       };
     });
+
 
 
     // Création du nouveau profil

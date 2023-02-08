@@ -96,10 +96,7 @@ export class LanguagesController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  async update(
-    @Param('id') id: number,
-    @Body() updateLanguageDto: CreateLanguageDto,
-  ) {
+  async update(@Param('id') id: number, @Body() updateLanguageDto: CreateLanguageDto) {
 
 
     // Vérifie si le langage à modifier existe
@@ -113,13 +110,13 @@ export class LanguagesController {
     // Vérifie que le langage modifié n'existe pas déjà
     const isLanguageExistsByName = await this.languagesService.findOneByName(updateLanguageDto.name);
 
-    if (isLanguageExistsById) {
+    if (isLanguageExistsByName) {
       throw new ConflictException('Ce langage existe déjà');
     };
 
 
     // Modifie le langage concerné
-    const updatedLanguage = this.languagesService.update(+id, updateLanguageDto);
+    const updatedLanguage = await this.languagesService.update(+id, updateLanguageDto);
     return {
       statusCode: 201,
       message: 'Modifications enregistrées',
@@ -127,7 +124,7 @@ export class LanguagesController {
     };
   };
 
-  
+
   /** Supprimer un langage */
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
@@ -139,10 +136,10 @@ export class LanguagesController {
 
     if (!isLanguageExists) {
       throw new BadRequestException('Language id unknown');
-    }
+    };
 
     // Supprime le langage concerné
-    const deletedLanguage = this.languagesService.remove(+id);
+    const deletedLanguage = await this.languagesService.remove(+id);
 
     return {
       statusCode: 201,
