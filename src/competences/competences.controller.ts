@@ -23,7 +23,6 @@ import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
 import { Competence } from './entities/competence.entity';
 
-
 /**Class permettant le contrôle des données entrantes pour les requête competences */
 //décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger
 @ApiTags('Competences')
@@ -32,34 +31,29 @@ import { Competence } from './entities/competence.entity';
 export class CompetencesController {
   constructor(private readonly competencesService: CompetencesService) {}
 
-
-
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createCompetenceDto: CreateCompetenceDto) {
-
-    console.log(createCompetenceDto); 
     // Verification des Doublons
-    const description = createCompetenceDto.description
-    const isCompetencesExists = await this.competencesService.findOneByDescription(description)
-    
+    const description = createCompetenceDto.description;
+    const isCompetencesExists =
+      await this.competencesService.findOneByDescription(description);
 
-      if(isCompetencesExists) {
+    if (isCompetencesExists) {
+      throw new ConflictException('La compétence existe déjà');
+    }
 
-        throw new ConflictException('La compétence existe déjà')
-      }
-
-    const createdCompetences = await this.competencesService.createCompetences(createCompetenceDto);
+    const createdCompetences = await this.competencesService.createCompetences(
+      createCompetenceDto,
+    );
 
     return {
       statusCode: 201,
       message: "Création d'une compétence réussie",
-      data: createdCompetences
-    }
+      data: createdCompetences,
+    };
   }
-
-
 
   /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
@@ -67,29 +61,25 @@ export class CompetencesController {
     const allCompetences = await this.competencesService.findAll();
     return {
       statusCode: 200,
-      message: "Récupération de toutes les compétences réussie",
-      data: allCompetences
-    }
+      message: 'Récupération de toutes les compétences réussie',
+      data: allCompetences,
+    };
   }
-
-
 
   /**Contrôle préalable à la récupération d'une compétence grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async findOne(@Param('id') id: string) {
     const oneCompetence = await this.competencesService.findOne(+id);
-    if (!oneCompetence){
-      throw new NotFoundException('La compétence n\'existe pas')
+    if (!oneCompetence) {
+      throw new NotFoundException("La compétence n'existe pas");
     }
     return {
       statusCode: 200,
       message: "Récupération d'une compétence réussie",
-      data: oneCompetence
-    }
+      data: oneCompetence,
+    };
   }
-
-
 
   /**Contrôle préalable à la modification d'une compétence */
   @UseGuards(JwtAuthGuard)
@@ -104,12 +94,15 @@ export class CompetencesController {
     if (!isCompetenceExists) {
       throw new BadRequestException('Compétence non trouvée');
     }
-    const updatedCompetences = await this.competencesService.update(+id, updateCompetenceDto);
+    const updatedCompetences = await this.competencesService.update(
+      +id,
+      updateCompetenceDto,
+    );
     return {
       statusCode: 201,
       message: 'Modifications de la présentation enregistrées',
-      data: updatedCompetences
-    }
+      data: updatedCompetences,
+    };
   }
 
   /**Contrôle préalable à la suppression d'une compétence */
@@ -127,7 +120,7 @@ export class CompetencesController {
     return {
       statusCode: 201,
       message: 'Suppression de la compétence enregistrée',
-      data:  deletedCompetence
+      data: deletedCompetence,
     };
   }
 }
