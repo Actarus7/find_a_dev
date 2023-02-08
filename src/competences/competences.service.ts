@@ -37,6 +37,13 @@ export class CompetencesService
   }
 
 
+  /**récupérer une compétence de la BDD par sa description  */
+  async findOneByDescription(description: string) : Promise<Competence>
+  {
+    return await Competence.findOneBy({ description })
+  }
+
+
   /**modifier une compétence de la BDD par son id */
   async update(id: number, updateCompetenceDto: UpdateCompetenceDto | any) : Promise<Competence>
   {

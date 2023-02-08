@@ -12,10 +12,12 @@ import {
   ParseIntPipe,
   Request,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Bind, UseGuards } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Not } from 'typeorm';
 import { CompetencesService } from './competences.service';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { UpdateCompetenceDto } from './dto/update-competence.dto';
@@ -35,17 +37,20 @@ export class CompetencesController {
   /**Contrôle préalable à l'ajout d'une nouvelle compétence, tout en applicant les obligations de createCompetenceDto */
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() description: string, @Request() req) {
+  async create(@Body() createCompetenceDto: CreateCompetenceDto) {
 
+    console.log(createCompetenceDto); 
     // Verification des Doublons
-    const isCompetencesExists = req.competences.description
+    const description = createCompetenceDto.description
+    const isCompetencesExists = await this.competencesService.findOneByDescription(description)
+    
 
-      if(isCompetencesExists === description) {
+      if(isCompetencesExists) {
 
         throw new ConflictException('La compétence existe déjà')
       }
 
-    const createdCompetences = await this.competencesService.createCompetences(description);
+    const createdCompetences = await this.competencesService.createCompetences(createCompetenceDto);
 
     return {
       statusCode: 201,
@@ -57,7 +62,6 @@ export class CompetencesController {
 
 
   /**Contrôle préalable à la récupération de toutes les compétences */
-  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
     const allCompetences = await this.competencesService.findAll();
@@ -71,11 +75,13 @@ export class CompetencesController {
 
 
   /**Contrôle préalable à la récupération d'une compétence grâce à son id */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async findOne(@Param('id') id: string) {
     const oneCompetence = await this.competencesService.findOne(+id);
+    if (!oneCompetence){
+      throw new NotFoundException('La compétence n\'existe pas')
+    }
     return {
       statusCode: 200,
       message: "Récupération d'une compétence réussie",
@@ -120,7 +126,7 @@ export class CompetencesController {
 
     return {
       statusCode: 201,
-      message: 'Suppression de la compétence enregistrées',
+      message: 'Suppression de la compétence enregistrée',
       data:  deletedCompetence
     };
   }
