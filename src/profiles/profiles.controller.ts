@@ -124,7 +124,7 @@ export class ProfilesController {
     const arrayAllLanguages = allLanguages.map((elm) => elm.name);
 
     createProfileDto.languages.forEach(async language => {
-      if (!arrayAllLanguages.includes(language.name)) {
+      if (!arrayAllLanguages.includes(language.name.toLowerCase())) {
         // Création du langage inexistant
         const newLanguage = await this.languageService.create({ name: language.name });
       };
