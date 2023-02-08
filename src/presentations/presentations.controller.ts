@@ -9,11 +9,15 @@ import {
   Bind,
   ParseIntPipe,
   BadRequestException,
+  UseGuards,
+  ConflictException,
+  Request,
 } from '@nestjs/common';
 import { PresentationsService } from './presentations.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 
 /**class permettant le contrôle des données entrantes pour les requêtes presentations */
@@ -25,9 +29,19 @@ export class PresentationsController {
   constructor(private readonly presentationsService: PresentationsService) {}
 
   /**Contrôle préalable à l'ajout d'une nouvelle présentation, tout en applicant les obligations de CreateCompetenceDto*/
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createPresentationDto: CreatePresentationDto) {
-    const createdPresentation = this.presentationsService.create(createPresentationDto);
+  async create(@Body() description: string, @Request() req) {
+
+    // vérification des doublons
+    const isPresentationExists = req.presentation.description
+
+      if (isPresentationExists === description){
+
+        throw new ConflictException('La présentation existe déjà')
+      }
+    const createdPresentation = await this.presentationsService.create(description);
+
     return {
       statusCode: 201,
       message: "Création d'une présentation réussie",
@@ -38,9 +52,12 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération de toutes les présentations */
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    const allPresentation = this.presentationsService.findAll();
+  async findAll() {
+
+    const allPresentation = await this.presentationsService.findAll();
+    
     return {
       statusCode: 200,
       message: "Récupération réussie de toutes les présentations",
@@ -51,19 +68,22 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  findOne(@Param('id') id: string) {
-    const onePresentation = this.presentationsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const onePresentation = await this.presentationsService.findOne(+id);
     return {
       statusCode: 200,
-      message: "Récupération réussie d'une présentation"
+      message: "Récupération réussie d'une présentation",
+      data: onePresentation
     }
   }
 
 
 
   /**Contrôle préalable à la modification d'une présentation */
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async update(
@@ -85,6 +105,7 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la suppression d'une compétence */
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @Bind(Param('id', new ParseIntPipe()))
   async remove(@Param('id') id: number) {
