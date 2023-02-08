@@ -42,6 +42,17 @@ export class LanguagesService {
   };
 
 
+  /** Récupération d'un langage par son name (avec les relations) */
+  async findOneByName(name: string) {
+    const language = await Language.findOneBy({name});
+
+    if (language) {
+      return language;
+    };
+
+    return language;
+  };
+
   async update(id: number, updateLanguageDto: UpdateLanguageDto) {
 
     const updateLanguage = await Language.update(+id, updateLanguageDto);

@@ -25,9 +25,9 @@ export class CompetencesService
   }
 
   /**récupérer toutes les compétences de la BDD */
-  findAll()
+  async findAll()
   {
-    return Competence.find();
+    return await Competence.find();
   }
 
   /**récupérer une compétence de la BDD par son id  */

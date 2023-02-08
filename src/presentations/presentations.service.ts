@@ -16,9 +16,9 @@ import { Presentation } from './entities/presentation.entity';
 export class PresentationsService
 {
   /**créer une présentation dans la BDD */
-  create(createPresentationDto: CreatePresentationDto | any)
+  async create(createPresentationDto: CreatePresentationDto | any)
   {
-    const newPresentation = Presentation.save(createPresentationDto)
+    const newPresentation = await Presentation.save(createPresentationDto)
     return newPresentation;
   }
 

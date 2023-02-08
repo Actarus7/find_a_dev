@@ -43,8 +43,8 @@ export class CompetencesController {
 
   /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
-  findAll() {
-    const allCompetences = this.competencesService.findAll();
+  async findAll() {
+    const allCompetences = await this.competencesService.findAll();
     return {
       statusCode: 200,
       message: "Récupération de toutes les compétences réussie",
