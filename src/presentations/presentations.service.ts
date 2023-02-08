@@ -16,26 +16,26 @@ import { Presentation } from './entities/presentation.entity';
 export class PresentationsService
 {
   /**créer une présentation dans la BDD */
-  create(createPresentationDto: CreatePresentationDto | any)
+  async create(createPresentationDto: CreatePresentationDto | any) : Promise<Presentation>
   {
-    const newPresentation = Presentation.save(createPresentationDto)
+    const newPresentation = await Presentation.save(createPresentationDto)
     return newPresentation;
   }
 
   /**trouver toutes les présentations dans la BDD */
-  findAll()
+  async findAll()
   {
-    return Presentation.find();
+    return await Presentation.find();
   }
 
   /**trouver une présentation dans la BDD par son id */
-  findOne(id: number)
+  async findOne(id: number) : Promise<Presentation>
   {
-    return Presentation.findOneBy({ id });
+    return await Presentation.findOneBy({ id });
   }
 
   /**modifier une présentation dans la BDD par son id */
-  async update(id: number, updatePresentationDto: UpdatePresentationDto)
+  async update(id: number, updatePresentationDto: UpdatePresentationDto) : Promise<Presentation>
   {
     const newPresentation = await Presentation.update(id, updatePresentationDto);
     if (newPresentation)
