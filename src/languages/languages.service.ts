@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { In } from "typeorm"
+import { Profile } from 'src/profiles/entities/profile.entity';
 import { CreateLanguageDto } from './dto/create-language.dto';
-import { UpdateLanguageDto } from './dto/update-language.dto';
 import { Language } from './entities/language.entity';
 
 @Injectable()
@@ -8,7 +9,6 @@ export class LanguagesService {
 
   /** Création d'un nouveau langage */
   async create(createLanguageDto: CreateLanguageDto | any) {
-    console.log(createLanguageDto);
 
     const newLanguage = await Language.save(createLanguageDto);
 
@@ -55,7 +55,7 @@ export class LanguagesService {
     return language;
   };
 
-  async update(id: number, updateLanguageDto: UpdateLanguageDto) {
+  async update(id: number, updateLanguageDto: CreateLanguageDto) {
 
     const updateLanguage = await Language.update(+id, updateLanguageDto);
 
@@ -78,4 +78,50 @@ export class LanguagesService {
     return undefined;
   };
 
+  async addToMe(userPseudo: string ,names : string[]){
+    const languages = await Language.find({
+      where : { name : In(names)}
+    })
+    console.log(languages);
+    
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        languages : true
+      }
+    })
+    profile.languages = [...profile.languages,...languages] ;
+    await profile.save()
+    return languages ;
+    
+  }
+
+  async findMine(userPseudo: string){
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        languages : true
+      }
+    })
+    return profile.languages ;
+  }
+
+  async subToMe(userPseudo: string ,names : string[]){
+    
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        languages : true
+      }
+    })
+    profile.languages = profile.languages.filter(item => !names.includes(item.name)) ;
+    console.log(profile.languages);
+    
+    await profile.save()
+    return profile.languages ;
+    
+  }
 };

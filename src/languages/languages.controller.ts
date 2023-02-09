@@ -18,6 +18,7 @@ import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ToMeLanguageDto } from './dto/toMe-language.dto';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Languages')
@@ -74,8 +75,8 @@ export class LanguagesController {
   /** Récupération d'un langage par son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  async findOne(@Param('id') id: number) {
-
+  async findOne(@Param('id') id: number ) {
+    
     // Vérifie que le langage sélectionné existe
     const language = await this.languagesService.findOne(+id);
 
@@ -89,7 +90,6 @@ export class LanguagesController {
       data: language
     };
   };
-
 
   /** Modification d'un langage */
   @UseGuards(JwtAuthGuard)
@@ -146,5 +146,103 @@ export class LanguagesController {
       data: deletedLanguage,
     };
   };
+  
 
-};
+
+
+
+  @UseGuards(JwtAuthGuard)
+  @Post('to/me')
+  async addToMe(@Body() toMeLanguageDto : ToMeLanguageDto, @Request() req) {
+
+    const userPseudo = req.user.pseudo
+
+    // Vérifie que languages[] n'est pas un array vide
+    if (toMeLanguageDto.languages.length < 1) {
+      throw new BadRequestException('Languages est vide');
+    };
+    // Vérifie que le type de données attendu dans langages est correct
+    
+    toMeLanguageDto.languages.forEach(elm => {
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
+      };
+    });
+    
+
+    // Modification du format d'envoi de langages
+    /*
+    let languages = []
+    toMeLanguageDto.languages.forEach(elm => {
+      languages.push({ name: elm })
+    });
+    toMeLanguageDto.languages = languages
+*/
+
+    // Vérifie que les langages à ajouter existent et les crée si besoin
+    const allLanguages = (await this.languagesService.findAll()).map((elm) => elm.name) ;
+
+    
+    // Création du langage inexistant
+    toMeLanguageDto.languages.filter(language => !allLanguages.includes(language))
+    .forEach(async language => {await this.languagesService.create({ name: language })});
+
+    const allMine = ( await this.languagesService.findMine(userPseudo)).map((elm) => elm.name) ;
+    const allAlreadyMine = toMeLanguageDto.languages.filter(language => !allMine.includes(language))
+    await this.languagesService.addToMe(userPseudo, allAlreadyMine) ;
+
+    return {
+      statusCode: 201,
+      message: 'Liste de mes langages',
+      //data: await this.languagesService.findMine(userPseudo)
+      data: (await this.languagesService.findMine(userPseudo)).map(item => item.name)
+    };
+  }
+
+  /** Récupération d'un langage par son id */
+  @UseGuards(JwtAuthGuard)
+  @Get('to/me')
+  async findMine(@Request() req) {
+
+    const userPseudo = req.user.pseudo
+
+    return {
+      statusCode: 200,
+      message: 'Liste de mes langages',
+      //data: await this.languagesService.findMine(userPseudo)
+      data: (await this.languagesService.findMine(userPseudo)).map(item => item.name)
+    };
+  };
+
+
+  /** Supprimer un langage */
+  @UseGuards(JwtAuthGuard)
+  @Delete('to/me')
+  async subToMe(@Body() toMeLanguageDto : ToMeLanguageDto, @Request() req) {
+
+    const userPseudo = req.user.pseudo
+
+    // Vérifie que languages[] n'est pas un array vide
+    if (toMeLanguageDto.languages.length < 1) {
+      throw new BadRequestException('Languages est vide');
+    };
+    // Vérifie que le type de données attendu dans langages est correct
+    
+    toMeLanguageDto.languages.forEach(elm => {
+      if (typeof (elm) != 'string') {
+        throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
+      };
+    });
+    
+    const allMine = ( await this.languagesService.findMine(userPseudo)).map((elm) => elm.name) ;
+    const allToSub = toMeLanguageDto.languages.filter(language => allMine.includes(language))
+    await this.languagesService.subToMe(userPseudo, allToSub) ;
+
+    return {
+      statusCode: 201,
+      message: 'Liste de mes langages',
+      //data: await this.languagesService.findMine(userPseudo)
+      data: (await this.languagesService.findMine(userPseudo)).map(item => item.name)
+    };
+}; 
+}
