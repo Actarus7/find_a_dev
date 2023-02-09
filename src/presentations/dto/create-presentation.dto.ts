@@ -1,12 +1,10 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
-
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreatePresentationDto {
-    
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    
-    description: string
+  @ApiProperty()
+  @IsString()
+  @Length(1)
+  @IsNotEmpty()
+  description: string;
 }
