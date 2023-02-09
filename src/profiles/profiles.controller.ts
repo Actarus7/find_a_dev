@@ -92,7 +92,7 @@ export class ProfilesController {
     // Modification du format d'envoi de competences
     let competences = []
     createProfileDto.competences.forEach(elm => {
-      competences.push({ id: elm })
+      competences.push({ description: elm })
     });
     createProfileDto.competences = competences
 
@@ -124,13 +124,9 @@ export class ProfilesController {
     const arrayAllLanguages = allLanguages.map((elm) => elm.name);
 
     createProfileDto.languages.forEach(async language => {
-      if (!arrayAllLanguages.includes(language.name)) {
+      if (!arrayAllLanguages.includes(language.name.toLowerCase())) {
         // Création du langage inexistant
-        const newLanguage = await this.languageService.create(language.name);
-        console.log(newLanguage);
-        return
-
-        // throw new BadRequestException(`Un des langages que vous essayez d'ajouter n'existe pas`);
+        const newLanguage = await this.languageService.create({ name: language.name });
       };
     });
 
@@ -138,10 +134,11 @@ export class ProfilesController {
 
     // Vérifie que les compétences à ajouter existent
     const allCompetences = await this.competencesService.findAll();
-    const arrayAllCompetences = allCompetences.map((elm) => elm.id);
+    const arrayAllCompetences = allCompetences.map((elm) => elm.description);
 
     createProfileDto.competences.forEach(competence => {
-      if (!arrayAllCompetences.includes(competence.id)) {
+      if (!arrayAllCompetences.includes(competence.description)) {
+
         throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
       };
     });
