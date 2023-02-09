@@ -19,9 +19,15 @@ export class PresentationsService
   /**créer une présentation dans la BDD */
   async create(createPresentationDto: CreatePresentationDto , userPseudo : string) : Promise<Presentation>
   {
+    const profile = await Profile.findOneBy({ user : {pseudo :userPseudo}})
+    console.log(profile);
+    
     const newPresentation = new Presentation()
     newPresentation.description = createPresentationDto.description ;
-    newPresentation.profile = await Profile.findOneBy({ user : {pseudo :userPseudo}})
+    newPresentation.profile = profile
+    console.log(newPresentation);
+    
+    await newPresentation.save() ;
     return newPresentation;
   }
 

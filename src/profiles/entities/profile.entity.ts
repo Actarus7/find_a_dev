@@ -21,7 +21,7 @@ export class Profile extends BaseEntity {
   id: number;
 
   @ApiProperty()
-  @OneToOne(() => Presentation)
+  @OneToOne(() => Presentation, presentation => presentation.profile)
   @JoinColumn()
   presentation: Presentation;
 

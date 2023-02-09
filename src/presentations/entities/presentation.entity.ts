@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { profile } from 'console';
 import { Profile } from 'src/profiles/entities/profile.entity';
 import {
   BaseEntity,
@@ -21,7 +22,6 @@ export class Presentation extends BaseEntity {
   description: string;
 
   @ApiProperty({ type: () => Profile })
-  @OneToOne(() => Profile)
-  @JoinColumn()
+  @OneToOne(() => Profile, profile => profile.user)
   profile: Profile;
 }
