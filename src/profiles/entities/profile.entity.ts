@@ -9,7 +9,6 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -31,7 +30,7 @@ export class Profile extends BaseEntity {
   languages: Language[];
 
   @ApiProperty()
-  @ManyToMany(() => Competence, competence => competence.profiles)
+  @ManyToMany(() => Competence, (competence) => competence.profiles)
   @JoinTable()
   competences: Competence[];
 

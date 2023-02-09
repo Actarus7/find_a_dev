@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Profile } from 'src/profiles/entities/profile.entity';
 import { Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
@@ -70,28 +71,45 @@ export class UsersService {
   async searchUser(getUserDto: GetUserDto) {
     console.log(getUserDto);
 
-    const user = await User.find({
-      select: { pseudo: true },
-      //relations: { profile: { competences: true, languages: true } },
-      /* where: [
-        {
-          pseudo: Like(`%${getUserDto.pseudo}%`),
-        },
-        { country: Like(`%${getUserDto.country}%`) },
-        { region: Like(`%${getUserDto.region}%`) },
-        { departement: Like(`%${getUserDto.departement}%`) },
-        { city: Like(`%${getUserDto.city}%`) }, */
-
-      /* { profile: { id: getUserDto.profileId } },
-        {
-          profile: {
-            competences: { description: Like(`%${getUserDto.competences}%`) },
-          },
-        }, */
-      //{ profile: { id: getUserDto.profileId } },
-      //],
+    const user = await Profile.find({
+      relations: { user: true },
+      select: { user: { pseudo: true } },
+      where: [
+        { competences: { description: Like(`%${getUserDto.competences}%`) } },
+        { languages: { name: Like(`%${getUserDto.languages}%`) } },
+        { user: { pseudo: Like(`%${getUserDto.pseudo}%`) } },
+        { user: { country: Like(`%${getUserDto.country}%`) } },
+        { user: { region: Like(`%${getUserDto.region}%`) } },
+        { user: { departement: Like(`%${getUserDto.departement}%`) } },
+        { user: { city: Like(`%${getUserDto.city}%`) } },
+      ],
     });
 
     return user;
   }
+  /*
+  async searchUser2(getUserDto: GetUserDto) {
+    console.log(getUserDto);
+    // "pseudo", competences, langages, "pays", "region", "departement", "ville"
+    const user = await User.find({
+      select: { pseudo: true },
+      relations: { profile: { competences: true, languages: true } },
+      where: {
+        pseudo: Like(`%${getUserDto.pseudo || ''}%`),
+        country: Like(`%${getUserDto.country || ''}%`),
+        region: Like(`%${getUserDto.region || ''}%`),
+        departement: Like(`%${getUserDto.departement || ''}%`),
+        city: Like(`%${getUserDto.city || ''}%`),
+        profile: {
+          competences: {
+            description: Like(`%${getUserDto.competences || ''}%`),
+          },
+          languages: { name: Like(`%${getUserDto.languages || ''}%`) },
+        },
+      },
+    });
+
+    return user;
+  }
+  */
 }
