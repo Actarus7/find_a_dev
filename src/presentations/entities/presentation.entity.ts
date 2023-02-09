@@ -7,6 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('presentations')
@@ -21,5 +22,6 @@ export class Presentation extends BaseEntity {
 
   @ApiProperty({ type: () => Profile })
   @OneToOne(() => Profile)
+  @JoinColumn()
   profile: Profile;
 }
