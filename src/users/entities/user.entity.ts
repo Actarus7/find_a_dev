@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import { profile } from 'console';
 import { Friendship } from 'src/friendships/entities/friendship.entity';
 import { Profile } from 'src/profiles/entities/profile.entity';
 import {
@@ -74,8 +75,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   zipcode: string;
 
-  @OneToOne(() => Profile)
-  @JoinColumn()
+  @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)

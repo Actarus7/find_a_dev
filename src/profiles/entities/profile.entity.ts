@@ -20,7 +20,7 @@ export class Profile extends BaseEntity {
   id: number;
 
   @ApiProperty()
-  @OneToOne(() => Presentation)
+  @OneToOne(() => Presentation, presentation => presentation.profile)
   @JoinColumn()
   presentation: Presentation;
 
@@ -36,6 +36,6 @@ export class Profile extends BaseEntity {
 
   @ApiProperty({ type: () => User })
   @JoinColumn()
-  @OneToOne(() => User)
-  user: User;
+  @OneToOne(() => User, (user) => user.profile)
+  user: User; 
 }
