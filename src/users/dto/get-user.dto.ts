@@ -18,11 +18,6 @@ export class GetUserDto {
   languages: string;
 
   @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  profileId: number;
-
-  @ApiProperty()
   @IsString()
   @IsOptional()
   country: string;
