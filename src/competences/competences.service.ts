@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompetenceDto } from './dto/create-competence.dto';
 import { Competence } from './entities/competence.entity';
+import { In } from "typeorm"
+import { Profile } from 'src/profiles/entities/profile.entity';
 
 /**
  * Ensemble des services pour la table Competences:
@@ -68,5 +70,51 @@ export class CompetencesService
       return `This action removes a #${id} competence`;
     };
     return undefined;
+  }
+
+  async addToMe(userPseudo: string ,names : string[]){
+    const competences = await Competence.find({
+      where : { description : In(names)}
+    })
+    
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        competences : true
+      }
+    })
+    profile.competences = [...profile.competences,...competences] ;
+    await profile.save()
+    return competences ;
+    
+  }
+
+  async findMine(userPseudo: string){
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        competences : true
+      }
+    })
+    return profile.competences ;
+  }
+
+  async subToMe(userPseudo: string ,names : string[]){
+    
+    const profile = await Profile.findOne({
+      where : {user : {pseudo : userPseudo}},
+      relations : { 
+        user : true ,
+        competences : true
+      }
+    })
+    profile.competences = profile.competences.filter(item => !names.includes(item.description)) ;
+    console.log(profile.competences);
+    
+    await profile.save()
+    return profile.competences ;
+    
   }
 }

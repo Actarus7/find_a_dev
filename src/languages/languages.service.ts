@@ -82,7 +82,6 @@ export class LanguagesService {
     const languages = await Language.find({
       where : { name : In(names)}
     })
-    console.log(languages);
     
     const profile = await Profile.findOne({
       where : {user : {pseudo : userPseudo}},
