@@ -1,4 +1,5 @@
-import {
+import
+{
   Controller,
   Get,
   Post,
@@ -50,13 +51,20 @@ export class CompetencesController {
     const isCompetencesExists =
       await this.competencesService.findOneByDescription(description);
 
-    if (isCompetencesExists) {
+
+    if (isCompetencesExists)
+    {
       throw new ConflictException('La compétence existe déjà');
     }
 
     const createdCompetences = await this.competencesService.createCompetences(
       createCompetenceDto,
     );
+
+    if (createdCompetences.description === " ")
+    {
+      throw new BadRequestException('Vous n\'avez pas fourni de compétence')
+    }
 
     return {
       statusCode: 201,
@@ -67,7 +75,8 @@ export class CompetencesController {
 
   /**Contrôle préalable à la récupération de toutes les compétences */
   @Get()
-  async findAll() {
+  async findAll()
+  {
     const allCompetences = await this.competencesService.findAll();
     return {
       statusCode: 200,
@@ -79,9 +88,11 @@ export class CompetencesController {
   /**Contrôle préalable à la récupération d'une compétence grâce à son id */
   @Get(':id')
   @Bind(Param('id', new ParseIntPipe()))
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string)
+  {
     const oneCompetence = await this.competencesService.findOne(+id);
-    if (!oneCompetence) {
+    if (!oneCompetence)
+    {
       throw new NotFoundException("La compétence n'existe pas");
     }
     return {
@@ -111,7 +122,8 @@ export class CompetencesController {
 
     const isCompetenceExists = await this.competencesService.findOne(id);
 
-    if (!isCompetenceExists) {
+    if (!isCompetenceExists)
+    {
       throw new BadRequestException('Compétence non trouvée');
     }
 
@@ -120,7 +132,13 @@ export class CompetencesController {
         updateCompetenceDto.description,
       );
 
-    if (isCompetencesExists) {
+    if (isCompetencesExists.description === " ")
+    {
+      throw new BadRequestException('Vous n\'avez pas fourni de compétence')
+    }
+
+    if (isCompetencesExists)
+    {
       throw new ConflictException('La compétence existe déjà');
     }
 
@@ -153,7 +171,8 @@ export class CompetencesController {
     // Vérifie que la compétence existe
     const isCompetenceExists = await this.competencesService.findOne(id);
 
-    if (!isCompetenceExists) {
+    if (!isCompetenceExists)
+    {
       throw new BadRequestException('Compétence non trouvée');
     }
     const deletedCompetence = await isCompetenceExists.remove();
