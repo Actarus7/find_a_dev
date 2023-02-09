@@ -45,6 +45,16 @@ export class UsersService {
     return userMail;
   }
 
+  async findOneById(id: number) {
+    const user = await User.findOneBy({ id });
+
+    if (user) {
+      return user;
+    };
+
+    return undefined;
+  };
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const newUser = await User.findOneBy({
       id: id,
@@ -69,7 +79,6 @@ export class UsersService {
   }
 
   async searchUser(getUserDto: GetUserDto) {
-    console.log(getUserDto);
 
     const user = await Profile.find({
       relations: { user: true },
