@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsArray, IsObject } from 'class-validator';
+import { IsNumber, IsArray } from 'class-validator';
 import { Competence } from 'src/competences/entities/competence.entity';
 import { Language } from 'src/languages/entities/language.entity';
 import { Presentation } from 'src/presentations/entities/presentation.entity';
-import { User } from 'src/users/entities/user.entity';
 
 export class CreateProfileDto {
   @ApiProperty()
@@ -12,11 +11,10 @@ export class CreateProfileDto {
 
   @ApiProperty()
   @IsArray()
-  languages: Language[];
+  languages: string[];
 
-  // @IsNumber({}, { each: true }) // ne marche plus car Array d'Objets Competence
   @ApiProperty()
   @IsArray()
-  competences: Competence[];
+  competences: string[];
 
 }; 

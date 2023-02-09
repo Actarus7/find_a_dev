@@ -7,7 +7,7 @@ import { Profile } from './entities/profile.entity';
 export class ProfilesService {
 
   /** Crée d'un nouveau profil */
-  async create(createProfileDto: CreateProfileDto | any, userIdLogged: number | any) {
+  async create(createProfileDto: CreateProfileDto | any, userIdLogged: number | any) {    
 
     const newProfile = new Profile();
     newProfile.languages = createProfileDto.languages;
@@ -15,7 +15,7 @@ export class ProfilesService {
     newProfile.presentation = createProfileDto.presentation;
     newProfile.user = userIdLogged;
 
-    await newProfile.save();
+    await newProfile.save();    
 
     if (newProfile) {
       return newProfile;

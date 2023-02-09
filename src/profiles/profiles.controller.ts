@@ -13,6 +13,7 @@ import {
   Request,
   ForbiddenException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -22,6 +23,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { LanguagesService } from 'src/languages/languages.service';
 import { CompetencesService } from 'src/competences/competences.service';
 import { PresentationsService } from 'src/presentations/presentations.service';
+import { Presentation } from 'src/presentations/entities/presentation.entity';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Profiles')
@@ -29,7 +31,7 @@ import { PresentationsService } from 'src/presentations/presentations.service';
 export class ProfilesController {
   constructor(
     private readonly profilesService: ProfilesService,
-    private readonly languageService: LanguagesService,
+    private readonly languagesService: LanguagesService,
     private readonly competencesService: CompetencesService,
     private readonly presentationsService: PresentationsService) { }
 
@@ -44,11 +46,11 @@ export class ProfilesController {
    */
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createProfileDto: CreateProfileDto | any, @Request() req) {
+  async create(@Body() createProfileDto: CreateProfileDto, @Request() req) {
 
 
     // Vérifie que la présentation existe
-    const isPresentationExists = await this.presentationsService.findOne(createProfileDto.presentation);
+    const isPresentationExists = await this.presentationsService.findOneByPresentationId(createProfileDto.presentation);
 
     if (!isPresentationExists) {
       throw new BadRequestException("Cette présentation n'existe pas");
@@ -68,12 +70,27 @@ export class ProfilesController {
       };
     });
 
+    // Vérifie que les langages à ajouter existent
+    const allLanguages = await this.languagesService.findAll();
+    const arrayAllLanguages = allLanguages.map((elm) => elm.name);
+
+    createProfileDto.languages.forEach(language => {
+      if (!arrayAllLanguages.includes(language.toLowerCase())) {
+        // Création du langage inexistant
+        throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
+        // const newLanguage = await this.languagesService.create({ name: language.toLowerCase() });
+
+      };
+    });
+
     // Modification du format d'envoi de langages
     let languages = []
-    createProfileDto.languages.forEach(elm => {
-      languages.push({ name: elm })
+    createProfileDto.languages.forEach(async language => {
+
+      languages.push({ id: ((await this.languagesService.findOneByName(language.toLowerCase())).id) });
     });
-    createProfileDto.languages = languages
+    createProfileDto.languages = languages;
+
 
 
 
@@ -89,12 +106,22 @@ export class ProfilesController {
       };
     });
 
+    // Vérifie que les compétences à ajouter existent
+    const allCompetences = await this.competencesService.findAll();
+    const arrayAllCompetences = allCompetences.map((elm) => elm.description);
+
+    createProfileDto.competences.forEach(competence => {
+      if (!arrayAllCompetences.includes(competence.toLowerCase())) {
+        throw new NotFoundException("La compétence que vous tentez d'ajouter à votre profil n'existe pas")
+      };
+    });
+
     // Modification du format d'envoi de competences
     let competences = []
-    createProfileDto.competences.forEach(elm => {
-      competences.push({ description: elm })
+    createProfileDto.competences.forEach(async description => {
+      competences.push({ id: ((await this.competencesService.findOneByDescription(description.toLowerCase())).id) })
     });
-    createProfileDto.competences = competences
+    createProfileDto.competences = competences;
 
 
 
@@ -119,36 +146,17 @@ export class ProfilesController {
 
 
 
-    // Vérifie que les langages à ajouter existent et les crée si besoin
-    const allLanguages = await this.languageService.findAll();
-    const arrayAllLanguages = allLanguages.map((elm) => elm.name);
-
-    createProfileDto.languages.forEach(async language => {
-      if (!arrayAllLanguages.includes(language.name.toLowerCase())) {
-        // Création du langage inexistant
-        const newLanguage = await this.languageService.create({ name: language.name });
-      };
-    });
-
-
-
-    // Vérifie que les compétences à ajouter existent
-    const allCompetences = await this.competencesService.findAll();
-    const arrayAllCompetences = allCompetences.map((elm) => elm.description);
-
-    createProfileDto.competences.forEach(competence => {
-      if (!arrayAllCompetences.includes(competence.description)) {
-
-        throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
-      };
-    });
-
-
 
     // Création du nouveau profil
     const newProfile = await this.profilesService.create(createProfileDto, userIdLogged);
 
-    return newProfile;
+    return {
+      statusCode: 201,
+      message: 'Profil créé',
+      data: {
+        newProfile,
+      },
+    };
   };
 
 
@@ -158,11 +166,17 @@ export class ProfilesController {
 
     const profiles = await this.profilesService.findAll();
 
-    if (profiles.length < 0) {
+    if (profiles.length < 1) {
       throw new BadRequestException("Il n'y a aucun profil à afficher")
     };
 
-    return profiles;
+    return {
+      statusCode: 200,
+      message: 'Profils disponibles',
+      data: {
+        profiles,
+      },
+    };
   };
 
 
@@ -173,11 +187,17 @@ export class ProfilesController {
     const profile = await this.profilesService.findOne(+id);
 
 
-    if (profile.length < 0) {
+    if (profile.length < 1) {
       throw new BadRequestException('Aucun profil à afficher');
     };
 
-    return profile;
+    return {
+      statusCode: 200,
+      message: 'Profil disponible',
+      data: {
+        profile,
+      },
+    };
   };
 
 
@@ -194,6 +214,12 @@ export class ProfilesController {
   @Bind(Param('id', new ParseIntPipe()))
   async update(@Param('id') id: number, @Body() updateProfileDto: UpdateProfileDto, @Request() req) {
 
+    // Vérifie qu'il y ait bien des données envoyées
+    if (!updateProfileDto.competences && !updateProfileDto.languages) {
+      throw new BadRequestException("Il n'y a aucune donnée à modifier, vérifiez votre envoi");
+    };
+
+
 
     // Vérifie que le profil id existe
     const isProfileExists = await this.profilesService.findOne(id);
@@ -201,6 +227,8 @@ export class ProfilesController {
     if (isProfileExists.length < 1) {
       throw new BadRequestException("Ce profil id n'existe pas");
     };
+
+
 
 
     // Vérifie que le user connecté est propriétaire du profil
@@ -211,36 +239,94 @@ export class ProfilesController {
     };
 
 
-    // Vérifie que les langages à ajouter existent
+
+
+    // Vérification des données SI modifications des langages
     if (updateProfileDto.languages) {
-      const allLanguages = await this.languageService.findAll();
-      const arrayAllLanguages = allLanguages.map((elm) => elm.id);
+      // Vérifie que languages[] n'est pas un array vide    
+      if (updateProfileDto.languages.length < 1) {
+        throw new BadRequestException('Languages est vide');
+      };
+
+      // Vérifie que le type de données attendu dans langages est correct
+      updateProfileDto.languages.forEach(elm => {
+        if (typeof (elm) != 'string') {
+          throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
+        };
+      });
+
+      // Vérifie que les langages à ajouter existent
+      const allLanguages = await this.languagesService.findAll();
+      const arrayAllLanguages = allLanguages.map((elm) => elm.name);
 
       updateProfileDto.languages.forEach(language => {
-        if (!arrayAllLanguages.includes(language.id)) {
-          throw new BadRequestException("Un des langages que vous essayez d'ajouter n'existe pas");
+        if (!arrayAllLanguages.includes(language.toLowerCase())) {
+          // Création du langage inexistant
+          throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
+          // const newLanguage = await this.languagesService.create({ name: language.toLowerCase() });
+
         };
       });
+
+      // Modification du format d'envoi de langages
+      let languages = []
+      updateProfileDto.languages.forEach(async language => {
+
+        languages.push({ id: ((await this.languagesService.findOneByName(language.toLowerCase())).id) });
+      });
+      updateProfileDto.languages = languages;
+
     };
 
 
-    // Vérifie que les compétences à ajouter existent
+
+
+
+    // Vérification des données SI modifications des compétences
     if (updateProfileDto.competences) {
+
+      // Vérifie que competences[] n'est pas un array vide
+      if (updateProfileDto.competences.length < 1) {
+        throw new BadRequestException('Compétences est vide');
+      };
+
+      // Vérifie que le type de données attendu dans compétences est correct
+      updateProfileDto.competences.forEach(elm => {
+        if (typeof (elm) != 'string') {
+          throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'string'");
+        };
+      });
+
+      // Vérifie que les compétences à ajouter existent
       const allCompetences = await this.competencesService.findAll();
-      const arrayAllCompetences = allCompetences.map((elm) => elm.id);
+      const arrayAllCompetences = allCompetences.map((elm) => elm.description);
 
       updateProfileDto.competences.forEach(competence => {
-        if (!arrayAllCompetences.includes(competence.id)) {
-          throw new BadRequestException("Une des compétences que vous essayez d'ajouter n'existe pas");
+        if (!arrayAllCompetences.includes(competence.toLowerCase())) {
+          throw new NotFoundException("La compétence que vous tentez d'ajouter à votre profil n'existe pas")
         };
       });
+
+      // Modification du format d'envoi de compétences
+      let competences = []
+      updateProfileDto.competences.forEach(async description => {
+        competences.push({ id: ((await this.competencesService.findOneByDescription(description.toLowerCase())).id) })
+      });
+      updateProfileDto.competences = competences;
     };
+
 
 
     // Modifie le profil
     const updatedProfile = await this.profilesService.update(+id, updateProfileDto);
 
-    return updatedProfile;
+    return {
+      statusCode: 201,
+      message: 'Profil modifié',
+      data: {
+        updatedProfile,
+      },
+    };
   };
 
 
@@ -275,6 +361,12 @@ export class ProfilesController {
     // Supprime le profil sélectionné
     const deletedProfile = await this.profilesService.remove(id);
 
-    return deletedProfile;
+    return {
+      statusCode: 200,
+      message: 'Profil supprimé',
+      data: {
+        deletedProfile,
+      },
+    };;
   };
 };
