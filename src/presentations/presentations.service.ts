@@ -23,15 +23,8 @@ export class PresentationsService
     console.log(userPseudo);
     
     const profile = await Profile.findOneBy({ user : {pseudo : userPseudo }})
-    /* 
-    console.log("**--", await Profile.find({
-      where :{ user : {pseudo :userPseudo}},
-      relations : {user : true}
-    })); */
-    console.log("----",profile);
     const newPresentation = new Presentation()
     newPresentation.description = createPresentationDto.description ;
-    console.log("----",newPresentation);
     await newPresentation.save() ;
     profile.presentation = newPresentation
     await profile.save() ;
@@ -81,7 +74,6 @@ export class PresentationsService
     
     if (presentation)
     {
-      console.log(presentation);
       
       presentation.profile.presentation = null ;
       presentation.profile.save() ;
