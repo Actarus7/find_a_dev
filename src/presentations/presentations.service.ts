@@ -74,7 +74,6 @@ export class PresentationsService
     
     if (presentation)
     {
-      
       presentation.profile.presentation = null ;
       presentation.profile.save() ;
       return await presentation.remove() ;
