@@ -51,9 +51,9 @@ export class UsersController {
       );
 
     // Hashage du password
-    const hash = await bcrypt.hash(createUserDto.password, saltOrRounds);
+    createUserDto.password = await bcrypt.hash(createUserDto.password, saltOrRounds);
     // Création du user
-    const user = await this.usersService.create(createUserDto, hash);
+    const user = await this.usersService.create(createUserDto);
 
     return {
       statusCode: 201,

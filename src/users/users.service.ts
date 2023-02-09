@@ -7,14 +7,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class UsersService {
-  async create(createUserDto: CreateUserDto, hash: string) {
+export class UsersService { 
+  async create(createUserDto: CreateUserDto) {
     const newUser = new User();
     newUser.email = createUserDto.email;
     newUser.firstname = createUserDto.firstname;
     newUser.lastname = createUserDto.lastname;
     newUser.pseudo = createUserDto.pseudo;
-    newUser.password = hash;
+    newUser.password = createUserDto.password;
     newUser.city = createUserDto.city;
     newUser.country = createUserDto.country;
     newUser.region = createUserDto.region;
@@ -23,6 +23,7 @@ export class UsersService {
     newUser.address_2 = createUserDto.address_2;
     newUser.address_3 = createUserDto.address_3;
     newUser.zipcode = createUserDto.zipcode;
+    newUser.profile = await new Profile().save()
 
     await newUser.save();
 

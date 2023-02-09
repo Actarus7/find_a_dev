@@ -9,7 +9,9 @@ import {
   Bind,
   ParseIntPipe,
   BadRequestException,
+  ConflictException,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { PresentationsService } from './presentations.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
@@ -29,9 +31,12 @@ export class PresentationsController {
   /**Contrôle préalable à l'ajout d'une nouvelle présentation, tout en applicant les obligations de CreateCompetenceDto*/
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createPresentationDto: CreatePresentationDto) {
+  async create(@Body() createPresentationDto: CreatePresentationDto, @Request() req) {
+    const userPseudo = req.user.pseudo ;
+    const exist = await this.presentationsService.findOneByUserPseudo(userPseudo)
+    if (exist) throw new ConflictException("This presentation already exist")
 
-    const createdPresentation = await this.presentationsService.create(createPresentationDto);
+    const createdPresentation = await this.presentationsService.create(createPresentationDto,userPseudo);
 
     return {
       statusCode: 201,
@@ -58,10 +63,11 @@ export class PresentationsController {
 
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
-  @Get(':id')
-  @Bind(Param('id', new ParseIntPipe()))
-  async findOne(@Param('id') id: string) {
-    const onePresentation = await this.presentationsService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async findOne(@Request() req) {
+    const userPseudo = req.user.pseudo ;
+    const onePresentation = await this.presentationsService.findOneByUserPseudo(userPseudo);
     return {
       statusCode: 200,
       message: "Récupération réussie d'une présentation",
@@ -73,17 +79,14 @@ export class PresentationsController {
 
   /**Contrôle préalable à la modification d'une présentation */
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  @Bind(Param('id', new ParseIntPipe()))
-  async update(
-    @Param('id') id: number,
-    @Body() updatePresentationDto: UpdatePresentationDto,
-  ) {
-    const isPresentationExists = await this.presentationsService.findOne(id);
+  @Patch()
+  async update( @Body() updatePresentationDto: UpdatePresentationDto, @Request() req) {
+    const userPseudo = req.user.pseudo ;
+    const isPresentationExists = await this.presentationsService.findOneByUserPseudo(userPseudo);
     if (!isPresentationExists) {
       throw new BadRequestException('Présentation non trouvée');
     }
-    const updatedPresentation = await this.presentationsService.update(+id, updatePresentationDto);
+    const updatedPresentation = await this.presentationsService.update(userPseudo, updatePresentationDto);
     
     return {
       statusCode: 201,

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Profile } from 'src/profiles/entities/profile.entity';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
 import { Presentation } from './entities/presentation.entity';
@@ -16,9 +17,11 @@ import { Presentation } from './entities/presentation.entity';
 export class PresentationsService
 {
   /**créer une présentation dans la BDD */
-  async create(createPresentationDto: CreatePresentationDto | any) : Promise<Presentation>
+  async create(createPresentationDto: CreatePresentationDto , userPseudo : string) : Promise<Presentation>
   {
-    const newPresentation = await Presentation.save(createPresentationDto)
+    const newPresentation = new Presentation()
+    newPresentation.description = createPresentationDto.description ;
+    newPresentation.profile = await Profile.findOneBy({ user : {pseudo :userPseudo}})
     return newPresentation;
   }
 
@@ -34,25 +37,33 @@ export class PresentationsService
     return await Presentation.findOneBy({ id });
   }
 
-  /**modifier une présentation dans la BDD par son id */
-  async update(id: number, updatePresentationDto: UpdatePresentationDto) : Promise<Presentation>
+  /**trouver une présentation dans la BDD par son id */
+  async findOneByUserPseudo(userPseudo : string) : Promise<Presentation>
   {
-    const newPresentation = await Presentation.update(id, updatePresentationDto);
+    return await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} });
+  }
+
+  /**modifier une présentation dans la BDD par son id */
+  async update(userPseudo: string, updatePresentationDto: UpdatePresentationDto) : Promise<Presentation>
+  {
+    const newPresentation = await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} });
     if (newPresentation)
     {
-      return await Presentation.findOneBy({ id });
+      newPresentation.description = updatePresentationDto.description ;
+      await newPresentation.save()
+      return await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} });
     };
     return undefined;
   }
 
   /**supprimer une présentation dans la BDD par son id */
-  async remove(id: number | any)
+  async remove(userPseudo: string)
   {
-    const presentation = await Presentation.remove(id);
+    const presentation = (await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} })).remove();
 
     if (presentation)
     {
-      return `This action removes a #${id} presentation`;
+      return 1;
     }
     return undefined
   }

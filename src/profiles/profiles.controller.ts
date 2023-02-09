@@ -42,6 +42,7 @@ export class ProfilesController {
    * * que les compétences existent
    * * que le présentation existe et ne soit pas déjà liée à un autre profil
    */
+  /*
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createProfileDto: CreateProfileDto | any, @Request() req) {
@@ -150,7 +151,7 @@ export class ProfilesController {
 
     return newProfile;
   };
-
+  */
 
   /** Récupèration de tous les profils */
   @Get()
