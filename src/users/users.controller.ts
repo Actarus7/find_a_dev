@@ -85,7 +85,7 @@ export class UsersController {
       message: 'Modifications enregistrées',
       data: {
         userUpdate,
-      },
+      }, 
     };
   }
 
