@@ -10,8 +10,9 @@ import { User } from './entities/user.entity';
 export class UsersService { 
   async create(createUserDto: CreateUserDto) {
     const newUser = new User();
+    const profile = await new Profile().save()
     newUser.email = createUserDto.email;
-    newUser.firstname = createUserDto.firstname;
+    newUser.firstname = createUserDto.firstname; 
     newUser.lastname = createUserDto.lastname;
     newUser.pseudo = createUserDto.pseudo;
     newUser.password = createUserDto.password;
@@ -23,7 +24,7 @@ export class UsersService {
     newUser.address_2 = createUserDto.address_2;
     newUser.address_3 = createUserDto.address_3;
     newUser.zipcode = createUserDto.zipcode;
-    newUser.profile = await new Profile().save()
+    newUser.profile = profile
 
     await newUser.save();
 
