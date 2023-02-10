@@ -29,8 +29,9 @@ export class UsersService {
     return newUser;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    const users = await User.find({relations: {profile: true}});
+    return users;
   }
 
   async findOneByPseudo(pseudo: string) {

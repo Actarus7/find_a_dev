@@ -74,7 +74,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   zipcode: string;
 
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile, profile => profile.user)
   @JoinColumn()
   profile: Profile;
 
