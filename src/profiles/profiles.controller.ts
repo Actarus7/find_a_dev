@@ -45,8 +45,8 @@ export class ProfilesController {
    * Nécessite : 
    * * d'être enregistré et connecté
    * * que le user connecté n'ait pas déjà un profil existant
-   * * que les langages existent
-   * * que les compétences existent
+   * * que les langages existent et les créent en conséquence
+   * * que les compétences existent et les créent en conséquence
    * * que le présentation existe et ne soit pas déjà liée à un autre profil
    */
   @UseGuards(JwtAuthGuard)
@@ -62,6 +62,15 @@ export class ProfilesController {
     };
 
 
+    // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
+    const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
+
+    if (isPresentationProfileAlreadyExists.length > 0) {
+      throw new ConflictException('Cette présentation est déjà affectée à un autre profil');
+    };
+
+
+
 
     // Vérifie que languages[] n'est pas un array vide
     if (createProfileDto.languages.length < 1) {
@@ -70,7 +79,7 @@ export class ProfilesController {
 
     // Vérifie que le type de données attendu dans langages est correct
     createProfileDto.languages.forEach(elm => {
-      if (typeof (elm) != 'string') {
+      if (typeof (elm.name) != 'string') {
         throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
       };
     });
@@ -78,23 +87,17 @@ export class ProfilesController {
     // Vérifie que les langages à ajouter existent
     const arrayAllLanguages = (await this.languagesService.findAll()).map((elm) => elm.name);
 
-    createProfileDto.languages.forEach(language => {
-      if (!arrayAllLanguages.includes(language)) {
-        // Création du langage inexistant
-        throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
-        // const newLanguage = await this.languagesService.create({ name: language.toLowerCase() });
-
-      };
-    });
-
-    // Modification du format d'envoi de langages
-    let languages = []
+    let languages = [];
     createProfileDto.languages.forEach(async language => {
-
-      languages.push({ id: ((await this.languagesService.findOneByName(language.toLowerCase())).id) });
+      if (!arrayAllLanguages.includes(language.name)) {
+        // Création du langage inexistant
+        languages.push(await this.languagesService.create(language));
+      }
+      else {
+        languages.push(await this.languagesService.findOneByName(language.name));
+      }
     });
     createProfileDto.languages = languages;
-
 
 
 
@@ -103,26 +106,24 @@ export class ProfilesController {
       throw new BadRequestException('Compétences est vide');
     };
 
-    // Vérifie que le type de données attendu dans compétences est correct
+    // Vérifie que le type de données attendu dans compétences est correct 
     createProfileDto.competences.forEach(elm => {
-      if (typeof (elm) != 'string') {
+      if (typeof (elm.description) != 'string') {
         throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'string'");
       };
     });
 
-    // Vérifie que les compétences à ajouter existent
+    // Vérifie que les compétences à ajouter existent et les créent si besoin
     const arrayAllCompetences = (await this.competencesService.findAll()).map((elm) => elm.description);
+    let competences = [];
 
-    createProfileDto.competences.forEach(competence => {
-      if (!arrayAllCompetences.includes(competence)) {
-        throw new NotFoundException("La compétence que vous tentez d'ajouter à votre profil n'existe pas")
-      };
-    });
-
-    // Modification du format d'envoi de competences
-    let competences = []
-    createProfileDto.competences.forEach(async description => {
-      competences.push({ id: ((await this.competencesService.findOneByDescription(description.toLowerCase())).id) })
+    createProfileDto.competences.forEach(async competence => {
+      if (!arrayAllCompetences.includes(competence.description)) {
+        competences.push(await this.competencesService.createCompetences(competence));
+      }
+      else {
+        competences.push(await this.competencesService.findOneByDescription(competence.description));
+      }
     });
     createProfileDto.competences = competences;
 
@@ -142,15 +143,6 @@ export class ProfilesController {
     // Récupère le user connecté
     const userLogged = await this.usersService.findOneById(userIdLogged);
 
-
-
-
-    // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
-    const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
-
-    if (isPresentationProfileAlreadyExists.length > 0) {
-      throw new ConflictException('Cette présentation est déjà affectée à un autre profil');
-    };
 
 
 
@@ -258,7 +250,7 @@ export class ProfilesController {
 
       // Vérifie que le type de données attendu dans langages est correct
       updateProfileDto.languages.forEach(elm => {
-        if (typeof (elm) != 'string') {
+        if (typeof (elm.name) != 'string') {
           throw new BadRequestException("Le type de données dans langages est incorrect - Attendu 'string'");
         };
       });
@@ -267,22 +259,16 @@ export class ProfilesController {
       const allLanguages = await this.languagesService.findAll();
       const arrayAllLanguages = allLanguages.map((elm) => elm.name);
 
-      updateProfileDto.languages.forEach(language => {
-        if (!arrayAllLanguages.includes(language.toLowerCase())) {
+      updateProfileDto.languages.forEach(async language => {
+        if (!arrayAllLanguages.includes(language.name)) {
           // Création du langage inexistant
-          throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
-          // const newLanguage = await this.languagesService.create({ name: language.toLowerCase() });
+          // throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
+          const newLanguage = await this.languagesService.create(language);
+
+
 
         };
       });
-
-      // Modification du format d'envoi de langages
-      let languages = []
-      updateProfileDto.languages.forEach(async language => {
-
-        languages.push({ id: ((await this.languagesService.findOneByName(language.toLowerCase())).id) });
-      });
-      updateProfileDto.languages = languages;
 
     };
 
@@ -300,7 +286,7 @@ export class ProfilesController {
 
       // Vérifie que le type de données attendu dans compétences est correct
       updateProfileDto.competences.forEach(elm => {
-        if (typeof (elm) != 'string') {
+        if (typeof (elm.description) != 'string') {
           throw new BadRequestException("Le type de données dans compétences est incorrect - Attendu 'string'");
         };
       });
@@ -309,19 +295,14 @@ export class ProfilesController {
       const allCompetences = await this.competencesService.findAll();
       const arrayAllCompetences = allCompetences.map((elm) => elm.description);
 
-      updateProfileDto.competences.forEach(competence => {
-        if (!arrayAllCompetences.includes(competence.toLowerCase())) {
-          throw new NotFoundException("La compétence que vous tentez d'ajouter à votre profil n'existe pas")
+      updateProfileDto.competences.forEach(async competence => {
+        if (!arrayAllCompetences.includes(competence.description)) {
+          const newCompetence = await this.competencesService.createCompetences(competence);
         };
       });
+    }
 
-      // Modification du format d'envoi de compétences
-      let competences = []
-      updateProfileDto.competences.forEach(async description => {
-        competences.push({ id: ((await this.competencesService.findOneByDescription(description.toLowerCase())).id) })
-      });
-      updateProfileDto.competences = competences;
-    };
+
 
 
 
@@ -336,6 +317,7 @@ export class ProfilesController {
       },
     };
   };
+
 
 
   /** Suppression d'un profil    
