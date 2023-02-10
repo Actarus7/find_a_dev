@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ILike, In, Like } from 'typeorm';
+import { ILike, In } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -109,7 +109,6 @@ export class UsersService {
       let result = true;
       if (getUserDto.languages) {
         const languages = item.profile.languages.map((elem) => elem.name);
-        console.log(languages);
         getUserDto.languages.forEach((elem) => {
           result = result && languages.includes(elem);
         });
@@ -118,7 +117,6 @@ export class UsersService {
         const competences = item.profile.competences.map(
           (elem) => elem.description,
         );
-        console.log(competences);
         getUserDto.languages.forEach((elem) => {
           result = result && competences.includes(elem);
         });
