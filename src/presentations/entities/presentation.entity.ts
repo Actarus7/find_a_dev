@@ -6,7 +6,6 @@ import {
   Entity,
   OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 
 @Entity('presentations')
@@ -16,10 +15,10 @@ export class Presentation extends BaseEntity {
   id: number;
 
   @ApiProperty()
-  @Column({type: 'varchar'})
+  @Column({ type: 'varchar' })
   description: string;
 
   @ApiProperty({ type: () => Profile })
-  @OneToOne(() => Profile, profile => profile.presentation)
+  @OneToOne(() => Profile, (profile) => profile.presentation)
   profile: Profile;
 }

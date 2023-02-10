@@ -1,8 +1,8 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsNumber, IsArray, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsArray, IsOptional } from 'class-validator';
 import { Competence } from 'src/competences/entities/competence.entity';
 import { Language } from 'src/languages/entities/language.entity';
-import { Presentation } from 'src/presentations/entities/presentation.entity';
 import { CreateProfileDto } from './create-profile.dto';
 
 export class UpdateProfileDto extends PartialType(CreateProfileDto) {
@@ -10,11 +10,13 @@ export class UpdateProfileDto extends PartialType(CreateProfileDto) {
   @ApiProperty()
   @IsArray()
   @IsOptional()
-  languages?: string[];
+  @Transform(obj => obj.value.map(elm => { return { name: elm.toLowerCase() } }))
+  languages?: Language[];
 
   @ApiProperty()
   @IsArray()
   @IsOptional()
-  competences?: string[];
+  @Transform(obj => obj.value.map(elm => { return { description: elm.toLowerCase() } }))
+  competences?: Competence[];
 
 };

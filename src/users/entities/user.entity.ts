@@ -12,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { GetUserDto } from '../dto/get-user.dto';
 
 @Entity('users')
 @Unique(['email', 'pseudo'])
@@ -55,7 +54,7 @@ export class User extends BaseEntity {
   region: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', default: '' })
   departement: string;
 
   @ApiProperty()
@@ -74,7 +73,15 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   zipcode: string;
 
-  @OneToOne(() => Profile, profile => profile.user)
+  @ApiProperty()
+  @Column({ type: 'float' })
+  latitude: number;
+
+  @ApiProperty()
+  @Column({ type: 'float' })
+  longitude: number;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)

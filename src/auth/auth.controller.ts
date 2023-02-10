@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  UseGuards,
-  Request,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './auth-login.dto';
