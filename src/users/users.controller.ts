@@ -17,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { GetUserDto } from './dto/get-user.dto';
+import { GetUserDto2 } from './dto/get-user.dto2';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Users')
@@ -91,7 +92,7 @@ export class UsersController {
 
   @Get()
   //@UseInterceptors(ClassSerializerInterceptor)
-  async search(@Body() getUserDto: GetUserDto) {
+  async search(@Body() getUserDto: GetUserDto2) {
     const user = await this.usersService.searchUser(getUserDto);
 
     return user;

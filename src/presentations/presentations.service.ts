@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { profile } from 'console';
 import { Profile } from 'src/profiles/entities/profile.entity';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
@@ -19,15 +20,12 @@ export class PresentationsService
   /**créer une présentation dans la BDD */
   async create(createPresentationDto: CreatePresentationDto , userPseudo : string) : Promise<Presentation>
   {
-    const profile = await Profile.findOneBy({ user : {pseudo :userPseudo}})
-    console.log(profile);
-    
+    const profile = await Profile.findOneBy({ user : {pseudo : userPseudo }})
     const newPresentation = new Presentation()
     newPresentation.description = createPresentationDto.description ;
-    newPresentation.profile = profile
-    console.log(newPresentation);
-    
     await newPresentation.save() ;
+    profile.presentation = newPresentation
+    await profile.save() ;
     return newPresentation;
   }
 
@@ -46,6 +44,7 @@ export class PresentationsService
   /**trouver une présentation dans la BDD par son id */
   async findOneByUserPseudo(userPseudo : string) : Promise<Presentation>
   {
+    
     return await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} });
   }
 
@@ -65,11 +64,17 @@ export class PresentationsService
   /**supprimer une présentation dans la BDD par son id */
   async remove(userPseudo: string)
   {
-    const presentation = (await Presentation.findOneBy({ profile : {user : {pseudo : userPseudo}} })).remove();
-
+    const presentation = await Presentation.findOne({
+      where : { profile : {user : {pseudo : userPseudo}} },
+      relations : { profile : true}
+    });
+    presentation.profile.presentation = null
+    
     if (presentation)
     {
-      return 1;
+      presentation.profile.presentation = null ;
+      presentation.profile.save() ;
+      return await presentation.remove() ;
     }
     return undefined
   }

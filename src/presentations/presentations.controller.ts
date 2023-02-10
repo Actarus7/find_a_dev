@@ -34,7 +34,9 @@ export class PresentationsController {
   async create(@Body() createPresentationDto: CreatePresentationDto, @Request() req) {
     const userPseudo = req.user.pseudo ;
     const exist = await this.presentationsService.findOneByUserPseudo(userPseudo)
-    if (exist) throw new ConflictException("This presentation already exist")
+
+    
+    if (exist !== null) throw new ConflictException("This presentation already exist")
 
     const createdPresentation = await this.presentationsService.create(createPresentationDto,userPseudo);
 
@@ -64,10 +66,13 @@ export class PresentationsController {
 
   /**Contrôle préalable à la récupération d'une présentation grâce à son id */
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get("mine")
   async findOne(@Request() req) {
     const userPseudo = req.user.pseudo ;
+    
     const onePresentation = await this.presentationsService.findOneByUserPseudo(userPseudo);
+
+    
     return {
       statusCode: 200,
       message: "Récupération réussie d'une présentation",
@@ -99,14 +104,16 @@ export class PresentationsController {
 
   /**Contrôle préalable à la suppression d'une compétence */
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  @Bind(Param('id', new ParseIntPipe()))
-  async remove(@Param('id') id: number) {
-    const isPresentationExists = await this.presentationsService.findOne(id);
-    if (!isPresentationExists) {
+  @Delete()
+  async remove(@Request() req) {
+    const userPseudo = req.user.pseudo ;
+    const isPresentationExists = await this.presentationsService.findOneByUserPseudo(userPseudo);
+    console.log(isPresentationExists); 
+    
+    if (isPresentationExists === null) {
       throw new BadRequestException('Présentation non trouvée');
     }
-    const deletedPresentation = await isPresentationExists.remove();
+    const deletedPresentation = await this.presentationsService.remove(userPseudo);
     return {
       statusCode: 201,
       message: 'Suppression de la présentation enregistrées',
@@ -114,3 +121,4 @@ export class PresentationsController {
     };
   }
 }
+ 
