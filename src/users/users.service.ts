@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Profile } from 'src/profiles/entities/profile.entity';
 import { ILike, In, Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
@@ -30,7 +29,7 @@ export class UsersService {
   }
 
   async findAll() {
-    const users = await User.find({relations: {profile: true}});
+    const users = await User.find({ relations: { profile: true } });
     return users;
   }
 
@@ -51,10 +50,10 @@ export class UsersService {
 
     if (user) {
       return user;
-    };
+    }
 
     return undefined;
-  };
+  }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const newUser = await User.findOneBy({
@@ -76,7 +75,6 @@ export class UsersService {
   }
 
   async searchUser(getUserDto: GetUserDto) {
-
     // "pseudo", competences, langages, "pays", "region", "departement", "ville"
     const users = await User.find({
       select: {
