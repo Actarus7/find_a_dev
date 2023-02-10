@@ -76,11 +76,10 @@ export class ProfilesController {
     });
 
     // Vérifie que les langages à ajouter existent
-    const allLanguages = await this.languagesService.findAll();
-    const arrayAllLanguages = allLanguages.map((elm) => elm.name);
+    const arrayAllLanguages = (await this.languagesService.findAll()).map((elm) => elm.name);
 
     createProfileDto.languages.forEach(language => {
-      if (!arrayAllLanguages.includes(language.toLowerCase())) {
+      if (!arrayAllLanguages.includes(language)) {
         // Création du langage inexistant
         throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
         // const newLanguage = await this.languagesService.create({ name: language.toLowerCase() });
@@ -112,11 +111,10 @@ export class ProfilesController {
     });
 
     // Vérifie que les compétences à ajouter existent
-    const allCompetences = await this.competencesService.findAll();
-    const arrayAllCompetences = allCompetences.map((elm) => elm.description);
+    const arrayAllCompetences = (await this.competencesService.findAll()).map((elm) => elm.description);
 
     createProfileDto.competences.forEach(competence => {
-      if (!arrayAllCompetences.includes(competence.toLowerCase())) {
+      if (!arrayAllCompetences.includes(competence)) {
         throw new NotFoundException("La compétence que vous tentez d'ajouter à votre profil n'existe pas")
       };
     });
