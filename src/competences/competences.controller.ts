@@ -128,10 +128,6 @@ export class CompetencesController {
         updateCompetenceDto.description,
       );
 
-    if (isCompetencesExists.description === " ")
-    {
-      throw new BadRequestException('Vous n\'avez pas fourni de compétence')
-    }
 
     if (isCompetencesExists)
     {
