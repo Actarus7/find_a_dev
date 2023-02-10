@@ -19,6 +19,8 @@ export class ProfilesService {
     newProfile.presentation = createProfileDto.presentation;
     newProfile.user = userLogged;
     
+    // console.log(newProfile);
+    
     await newProfile.save();
 
     if (newProfile) {

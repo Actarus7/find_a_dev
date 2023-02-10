@@ -87,17 +87,20 @@ export class ProfilesController {
     // Vérifie que les langages à ajouter existent
     const arrayAllLanguages = (await this.languagesService.findAll()).map((elm) => elm.name);
 
-    let languages = [];
-    createProfileDto.languages.forEach(async language => {
-      if (!arrayAllLanguages.includes(language.name)) {
-        // Création du langage inexistant
-        languages.push(await this.languagesService.create(language));
-      }
-      else {
-        languages.push(await this.languagesService.findOneByName(language.name));
-      }
-    });
-    createProfileDto.languages = languages;
+
+    const languages = await Promise.all(
+      createProfileDto.languages.map(async language => {
+        if (!arrayAllLanguages.includes(language.name)) {
+          await this.languagesService.create(language);
+          return await this.languagesService.findOneByName(language.name);
+        }
+        else {
+          return await this.languagesService.findOneByName(language.name);
+        }
+      }))
+      .then(async (languages) => languages);
+
+
 
 
 
@@ -113,19 +116,25 @@ export class ProfilesController {
       };
     });
 
+
+
+
     // Vérifie que les compétences à ajouter existent et les créent si besoin
     const arrayAllCompetences = (await this.competencesService.findAll()).map((elm) => elm.description);
-    let competences = [];
+    const competences = await Promise.all(
+      createProfileDto.competences.map(async competence => {
+        if (!arrayAllCompetences.includes(competence.description)) {
+          await this.competencesService.createCompetences(competence);
+          return await this.competencesService.findOneByDescription(competence.description)
+        }
+        else {
+          return await this.competencesService.findOneByDescription(competence.description);
+        }
+      }))
+      .then(async (competences) => competences)
 
-    createProfileDto.competences.forEach(async competence => {
-      if (!arrayAllCompetences.includes(competence.description)) {
-        competences.push(await this.competencesService.createCompetences(competence));
-      }
-      else {
-        competences.push(await this.competencesService.findOneByDescription(competence.description));
-      }
-    });
-    createProfileDto.competences = competences;
+
+
 
 
 
@@ -145,7 +154,8 @@ export class ProfilesController {
 
 
 
-
+    createProfileDto.languages = languages;
+    console.log('ghfyf', createProfileDto.languages);
 
     // Création du nouveau profil
     const newProfile = await this.profilesService.create(createProfileDto, userLogged);
@@ -155,8 +165,32 @@ export class ProfilesController {
       message: 'Profil créé',
       data: {
         newProfile,
-      },
+      }
     };
+
+    /* createProfileDto.languages.forEach(async language => {
+    if (!arrayAllLanguages.includes(language.name)) {
+      // Création du langage inexistant
+   
+
+      languages.push(await this.languagesService.create(language));
+     
+
+    }
+    else {
+      languages.push(await this.languagesService.findOneByName(language.name));
+    }
+
+  }) */
+
+
+
+
+
+
+
+
+
   };
 
 
