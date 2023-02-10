@@ -61,10 +61,6 @@ export class CompetencesController {
       createCompetenceDto,
     );
 
-    if (createdCompetences.description === " ")
-    {
-      throw new BadRequestException('Vous n\'avez pas fourni de compétence')
-    }
 
     return {
       statusCode: 201,
