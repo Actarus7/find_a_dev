@@ -96,4 +96,10 @@ export class UsersController {
 
     return user;
   }
+
+  @Get('users')
+  async findAll() {
+    const users = await this.usersService.findAll();
+    return users
+  }
 }

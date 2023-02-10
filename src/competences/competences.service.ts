@@ -13,45 +13,38 @@ import { Competence } from './entities/competence.entity';
  */
 @Injectable()
 /**Class permettant la gestion des requètes SQL pour les compétences */
-export class CompetencesService
-{
+export class CompetencesService {
 
   /**créer une compétence dans la BDD */
-  async createCompetences(createCompetenceDto: CreateCompetenceDto | any) : Promise<Competence>
-  {
-    
+  async createCompetences(createCompetenceDto: CreateCompetenceDto | any): Promise<Competence> {
     const newCompetence = await Competence.save(createCompetenceDto);
+
     return newCompetence;
   }
 
   /**récupérer toutes les compétences de la BDD */
-  async findAll()
-  {
+  async findAll() {
     return await Competence.find();
   }
 
   /**récupérer une compétence de la BDD par son id  */
-  async findOne(id: number) : Promise<Competence>
-  {
+  async findOne(id: number): Promise<Competence> {
     return await Competence.findOneBy({ id })
   }
 
 
   /**récupérer une compétence de la BDD par sa description  */
-  async findOneByDescription(description: string) : Promise<Competence>
-  {
+  async findOneByDescription(description: string): Promise<Competence> {
     return await Competence.findOneBy({ description })
   }
 
 
   /**modifier une compétence de la BDD par son id */
-  async update(id: number, updateCompetenceDto: CreateCompetenceDto) : Promise<Competence>
-  {
+  async update(id: number, updateCompetenceDto: CreateCompetenceDto): Promise<Competence> {
 
     const newCompetence = await Competence.update(id, updateCompetenceDto);
 
-    if (newCompetence)
-    {
+    if (newCompetence) {
       return await Competence.findOneBy({ id });
     };
 
@@ -59,12 +52,10 @@ export class CompetencesService
   };
 
   /**supprimer une compétence de la BDD par son id */
-  async remove(id: number | any)
-  {
+  async remove(id: number | any) {
     const competence = await Competence.remove(id);
 
-    if (competence)
-    {
+    if (competence) {
       return `This action removes a #${id} competence`;
     };
     return undefined;

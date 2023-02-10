@@ -8,7 +8,6 @@ export class LanguagesService {
 
   /** Création d'un nouveau langage */
   async create(createLanguageDto: CreateLanguageDto | any) {
-    console.log(createLanguageDto);
 
     const newLanguage = await Language.save(createLanguageDto);
 

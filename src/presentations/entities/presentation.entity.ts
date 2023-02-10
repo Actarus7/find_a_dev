@@ -20,6 +20,6 @@ export class Presentation extends BaseEntity {
   description: string;
 
   @ApiProperty({ type: () => Profile })
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile, profile => profile.presentation)
   profile: Profile;
 }

@@ -29,8 +29,9 @@ export class UsersService {
     return newUser;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    const users = await User.find({relations: {profile: true}});
+    return users;
   }
 
   async findOneByPseudo(pseudo: string) {
@@ -44,6 +45,16 @@ export class UsersService {
 
     return userMail;
   }
+
+  async findOneById(id: number) {
+    const user = await User.findOneBy({ id });
+
+    if (user) {
+      return user;
+    };
+
+    return undefined;
+  };
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const newUser = await User.findOneBy({
@@ -65,7 +76,6 @@ export class UsersService {
   }
 
   async searchUser(getUserDto: GetUserDto) {
-    console.log(getUserDto);
 
     // "pseudo", competences, langages, "pays", "region", "departement", "ville"
     const users = await User.find({

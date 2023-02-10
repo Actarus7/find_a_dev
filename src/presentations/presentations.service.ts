@@ -13,45 +13,41 @@ import { Presentation } from './entities/presentation.entity';
  * * **remove**             : permet de supprimer une présentation de la BDD par son id */
 @Injectable()
 /**Class permettant la gestion des requètes SQL pour les compétences */
-export class PresentationsService
-{
+export class PresentationsService {
   /**créer une présentation dans la BDD */
-  async create(createPresentationDto: CreatePresentationDto | any) : Promise<Presentation>
-  {
+  async create(createPresentationDto: CreatePresentationDto | any): Promise<Presentation> {
     const newPresentation = await Presentation.save(createPresentationDto)
     return newPresentation;
   }
 
   /**trouver toutes les présentations dans la BDD */
-  async findAll()
-  {
-    return await Presentation.find();
+  async findAll() {
+    return await Presentation.find({relations: {profile: true}});
   }
 
   /**trouver une présentation dans la BDD par son id */
-  async findOne(id: number) : Promise<Presentation>
-  {
+  async findOne(id: number): Promise<Presentation> {
     return await Presentation.findOneBy({ id });
   }
 
+  async findOneByPresentationId(presentation: Presentation) {
+    return await Presentation.findOneBy({ id: presentation.id })
+  }
+
   /**modifier une présentation dans la BDD par son id */
-  async update(id: number, updatePresentationDto: UpdatePresentationDto) : Promise<Presentation>
-  {
+  async update(id: number, updatePresentationDto: UpdatePresentationDto): Promise<Presentation> {
     const newPresentation = await Presentation.update(id, updatePresentationDto);
-    if (newPresentation)
-    {
+    if (newPresentation) {
       return await Presentation.findOneBy({ id });
     };
     return undefined;
   }
 
   /**supprimer une présentation dans la BDD par son id */
-  async remove(id: number | any)
-  {
+  async remove(id: number | any) {
     const presentation = await Presentation.remove(id);
 
-    if (presentation)
-    {
+    if (presentation) {
       return `This action removes a #${id} presentation`;
     }
     return undefined
