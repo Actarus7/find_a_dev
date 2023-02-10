@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'src/profiles/entities/profile.entity';
-import { Like } from 'typeorm';
+import { ILike, In, Like } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -64,52 +64,58 @@ export class UsersService {
     return await User.findOneBy({ id: id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
   async searchUser(getUserDto: GetUserDto) {
     console.log(getUserDto);
 
-    const user = await Profile.find({
-      relations: { user: true },
-      select: { user: { pseudo: true } },
-      where: [
-        { competences: { description: Like(`%${getUserDto.competences}%`) } },
-        { languages: { name: Like(`%${getUserDto.languages}%`) } },
-        { user: { pseudo: Like(`%${getUserDto.pseudo}%`) } },
-        { user: { country: Like(`%${getUserDto.country}%`) } },
-        { user: { region: Like(`%${getUserDto.region}%`) } },
-        { user: { departement: Like(`%${getUserDto.departement}%`) } },
-        { user: { city: Like(`%${getUserDto.city}%`) } },
-      ],
-    });
-
-    return user;
-  }
-  /*
-  async searchUser2(getUserDto: GetUserDto) {
-    console.log(getUserDto);
     // "pseudo", competences, langages, "pays", "region", "departement", "ville"
-    const user = await User.find({
-      select: { pseudo: true },
+    const users = await User.find({
+      select: {
+        pseudo: true,
+        country: true,
+        region: true,
+        departement: true,
+        city: true,
+      },
       relations: { profile: { competences: true, languages: true } },
       where: {
-        pseudo: Like(`%${getUserDto.pseudo || ''}%`),
-        country: Like(`%${getUserDto.country || ''}%`),
-        region: Like(`%${getUserDto.region || ''}%`),
-        departement: Like(`%${getUserDto.departement || ''}%`),
-        city: Like(`%${getUserDto.city || ''}%`),
+        pseudo: ILike(`%${getUserDto.pseudo || ''}%`),
+        country: ILike(`%${getUserDto.country || ''}%`),
+        region: ILike(`%${getUserDto.region || ''}%`),
+        departement: ILike(`%${getUserDto.departement || ''}%`),
+        city: ILike(`%${getUserDto.city || ''}%`),
+
         profile: {
           competences: {
-            description: Like(`%${getUserDto.competences || ''}%`),
+            description: getUserDto.competences
+              ? In(getUserDto.competences)
+              : undefined,
           },
-          languages: { name: Like(`%${getUserDto.languages || ''}%`) },
+          languages: {
+            name: getUserDto.languages ? In(getUserDto.languages) : undefined,
+          },
         },
       },
     });
 
-    return user;
+    return users.filter((item) => {
+      let result = true;
+      if (getUserDto.languages) {
+        const languages = item.profile.languages.map((elem) => elem.name);
+        console.log(languages);
+        getUserDto.languages.forEach((elem) => {
+          result = result && languages.includes(elem);
+        });
+      }
+      if (getUserDto.competences) {
+        const competences = item.profile.competences.map(
+          (elem) => elem.description,
+        );
+        console.log(competences);
+        getUserDto.languages.forEach((elem) => {
+          result = result && competences.includes(elem);
+        });
+      }
+      return result;
+    });
   }
-  */
 }
