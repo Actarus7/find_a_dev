@@ -35,7 +35,6 @@ export class UsersService {
       );
 
     const coord = await lastValueFrom(responseA);
-    console.log(coord.lat);
 
     const newUser = new User();
     newUser.email = createUserDto.email;
