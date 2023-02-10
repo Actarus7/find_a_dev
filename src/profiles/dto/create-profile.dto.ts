@@ -6,7 +6,6 @@ import { Presentation } from 'src/presentations/entities/presentation.entity';
 
 export class CreateProfileDto {
   @ApiProperty()
-  @IsNumber()
   presentation: Presentation;
 
   @ApiProperty()

@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Presentation } from 'src/presentations/entities/presentation.entity';
+import { User } from 'src/users/entities/user.entity';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
@@ -7,13 +9,14 @@ import { Profile } from './entities/profile.entity';
 export class ProfilesService {
 
   /** Crée d'un nouveau profil */
-  async create(createProfileDto: CreateProfileDto | any, userIdLogged: number | any) {    
+  async create(createProfileDto: CreateProfileDto | any, userLogged: User) {    
 
     const newProfile = new Profile();
     newProfile.languages = createProfileDto.languages;
     newProfile.competences = createProfileDto.competences;
     newProfile.presentation = createProfileDto.presentation;
-    newProfile.user = userIdLogged;
+    newProfile.user = userLogged;
+    
 
     await newProfile.save();    
 
@@ -78,9 +81,9 @@ export class ProfilesService {
   };
 
   /** Récupère un profil par le presentationId */
-  async findOneByPresentationId(presentationId) {
+  async findOneByPresentationId(presentation: Presentation) {
 
-    const profile = await Profile.find({ where: { presentation: { id: presentationId } } });
+    const profile = await Profile.find({ where: { presentation: { id: presentation.id } } });
 
 
     if (profile) {

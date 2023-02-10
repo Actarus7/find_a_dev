@@ -75,7 +75,6 @@ export class User extends BaseEntity {
   zipcode: string;
 
   @OneToOne(() => Profile, profile => profile.user)
-  @JoinColumn()
   profile: Profile;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user)

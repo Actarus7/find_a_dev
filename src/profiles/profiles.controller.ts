@@ -14,6 +14,8 @@ import {
   ForbiddenException,
   ConflictException,
   NotFoundException,
+  UseInterceptors,
+  ClassSerializerInterceptor
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -24,16 +26,19 @@ import { LanguagesService } from 'src/languages/languages.service';
 import { CompetencesService } from 'src/competences/competences.service';
 import { PresentationsService } from 'src/presentations/presentations.service';
 import { Presentation } from 'src/presentations/entities/presentation.entity';
+import { UsersService } from 'src/users/users.service';
 
 /**décorateur Tag permettant de catégoriser les différentes route dans la doc API Swagger*/
 @ApiTags('Profiles')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('profiles')
 export class ProfilesController {
   constructor(
     private readonly profilesService: ProfilesService,
     private readonly languagesService: LanguagesService,
     private readonly competencesService: CompetencesService,
-    private readonly presentationsService: PresentationsService) { }
+    private readonly presentationsService: PresentationsService,
+    private readonly usersService: UsersService) { }
 
 
   /** Création d'un nouveau profil   
@@ -136,6 +141,11 @@ export class ProfilesController {
     };
 
 
+    // Récupère le user connecté
+    const userLogged = await this.usersService.findOneById(userIdLogged);
+
+
+
 
     // Vérifie que la présentation n'est pas déjà attribuée à un profil (1 profil = 1 présentation)
     const isPresentationProfileAlreadyExists = await this.profilesService.findOneByPresentationId(createProfileDto.presentation);
@@ -148,7 +158,7 @@ export class ProfilesController {
 
 
     // Création du nouveau profil
-    const newProfile = await this.profilesService.create(createProfileDto, userIdLogged);
+    const newProfile = await this.profilesService.create(createProfileDto, userLogged);
 
     return {
       statusCode: 201,

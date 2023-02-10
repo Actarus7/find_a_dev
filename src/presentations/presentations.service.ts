@@ -22,7 +22,7 @@ export class PresentationsService {
 
   /**trouver toutes les présentations dans la BDD */
   async findAll() {
-    return await Presentation.find();
+    return await Presentation.find({relations: {profile: true}});
   }
 
   /**trouver une présentation dans la BDD par son id */
