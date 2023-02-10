@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsArray, IsOptional, IsString, Length } from 'class-validator';
 
 export class GetUserDto {
   @ApiProperty()
@@ -9,16 +9,14 @@ export class GetUserDto {
   pseudo: string;
 
   @ApiProperty()
-  @IsString()
-  @Length(1)
+  @IsArray()
   @IsOptional()
-  competences: string;
+  competences: string[];
 
   @ApiProperty()
-  @IsString()
-  @Length(1)
+  @IsArray()
   @IsOptional()
-  languages: string;
+  languages: string[];
 
   @ApiProperty()
   @IsString()
