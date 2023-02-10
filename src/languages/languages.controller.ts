@@ -31,6 +31,7 @@ export class LanguagesController {
   @Post()
   async create(@Body() createLanguageDto: CreateLanguageDto) {
 
+console.log(createLanguageDto);
 
     // Vérifie que le langage à créer n'existe pas déjà
     const isLanguageExists = await this.languagesService.findOneByName(createLanguageDto.name);

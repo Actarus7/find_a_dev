@@ -9,16 +9,17 @@ import { Profile } from './entities/profile.entity';
 export class ProfilesService {
 
   /** Crée d'un nouveau profil */
-  async create(createProfileDto: CreateProfileDto | any, userLogged: User) {    
+  async create(createProfileDto: CreateProfileDto | any, userLogged: User) {
+
 
     const newProfile = new Profile();
     newProfile.languages = createProfileDto.languages;
     newProfile.competences = createProfileDto.competences;
     newProfile.presentation = createProfileDto.presentation;
     newProfile.user = userLogged;
-    
 
-    await newProfile.save();    
+
+    await newProfile.save();
 
     if (newProfile) {
       return newProfile;
@@ -79,6 +80,7 @@ export class ProfilesService {
 
     return undefined;
   };
+
 
   /** Récupère un profil par le presentationId */
   async findOneByPresentationId(presentation: Presentation) {
