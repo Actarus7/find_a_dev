@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Language } from 'src/languages/entities/language.entity';
 import { Presentation } from 'src/presentations/entities/presentation.entity';
 import { User } from 'src/users/entities/user.entity';
+import { In } from 'typeorm';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
@@ -9,16 +11,14 @@ import { Profile } from './entities/profile.entity';
 export class ProfilesService {
 
   /** Crée d'un nouveau profil */
-  async create(createProfileDto: CreateProfileDto | any, userLogged: User) {
-
-
+  async create(createProfileDto: CreateProfileDto , userLogged: User) {
+ 
     const newProfile = new Profile();
     newProfile.languages = createProfileDto.languages;
     newProfile.competences = createProfileDto.competences;
     newProfile.presentation = createProfileDto.presentation;
     newProfile.user = userLogged;
-
-
+    
     await newProfile.save();
 
     if (newProfile) {
