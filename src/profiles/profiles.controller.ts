@@ -53,9 +53,9 @@ export class ProfilesController {
   @Post()
   async create(@Body() createProfileDto: CreateProfileDto, @Request() req) {
 
-
     // Vérifie que la présentation existe
     const isPresentationExists = await this.presentationsService.findOneByPresentationId(createProfileDto.presentation);
+    
 
     if (!isPresentationExists) {
       throw new BadRequestException("Cette présentation n'existe pas");
@@ -72,10 +72,6 @@ export class ProfilesController {
 
 
 
-    // Vérifie que languages[] n'est pas un array vide
-    if (createProfileDto.languages.length < 1) {
-      throw new BadRequestException('Languages est vide');
-    };
 
     // Vérifie que le type de données attendu dans langages est correct
     createProfileDto.languages.forEach(elm => {
@@ -84,7 +80,7 @@ export class ProfilesController {
       };
     });
 
-    // Vérifie que les langages à ajouter existent
+    // Vérifie que les langages à ajouter existent et les créent si besoin
     const arrayAllLanguages = (await this.languagesService.findAll()).map((elm) => elm.name);
 
 
@@ -99,15 +95,12 @@ export class ProfilesController {
         }
       }))
       .then(async (languages) => languages);
+    createProfileDto.languages = languages;
 
 
 
 
 
-    // Vérifie que competences[] n'est pas un array vide
-    if (createProfileDto.competences.length < 1) {
-      throw new BadRequestException('Compétences est vide');
-    };
 
     // Vérifie que le type de données attendu dans compétences est correct 
     createProfileDto.competences.forEach(elm => {
@@ -132,9 +125,7 @@ export class ProfilesController {
         }
       }))
       .then(async (competences) => competences)
-
-
-
+    createProfileDto.competences = competences;
 
 
 
@@ -149,13 +140,12 @@ export class ProfilesController {
     };
 
 
+
     // Récupère le user connecté
     const userLogged = await this.usersService.findOneById(userIdLogged);
 
 
 
-    createProfileDto.languages = languages;
-    console.log('ghfyf', createProfileDto.languages);
 
     // Création du nouveau profil
     const newProfile = await this.profilesService.create(createProfileDto, userLogged);
@@ -167,30 +157,6 @@ export class ProfilesController {
         newProfile,
       }
     };
-
-    /* createProfileDto.languages.forEach(async language => {
-    if (!arrayAllLanguages.includes(language.name)) {
-      // Création du langage inexistant
-   
-
-      languages.push(await this.languagesService.create(language));
-     
-
-    }
-    else {
-      languages.push(await this.languagesService.findOneByName(language.name));
-    }
-
-  }) */
-
-
-
-
-
-
-
-
-
   };
 
 
@@ -297,7 +263,7 @@ export class ProfilesController {
         if (!arrayAllLanguages.includes(language.name)) {
           // Création du langage inexistant
           // throw new NotFoundException("Le langage que vous tentez d'ajouter à votre profil n'existe pas")
-          const newLanguage = await this.languagesService.create(language);
+          const newLanguage = await this.languagesService.create(language.name);
 
 
 
@@ -331,7 +297,7 @@ export class ProfilesController {
 
       updateProfileDto.competences.forEach(async competence => {
         if (!arrayAllCompetences.includes(competence.description)) {
-          const newCompetence = await this.competencesService.createCompetences(competence);
+          const newCompetence = await this.competencesService.createCompetences(competence.description);
         };
       });
     }

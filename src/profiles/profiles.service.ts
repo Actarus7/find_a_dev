@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Competence } from 'src/competences/entities/competence.entity';
 import { Language } from 'src/languages/entities/language.entity';
 import { Presentation } from 'src/presentations/entities/presentation.entity';
 import { User } from 'src/users/entities/user.entity';
